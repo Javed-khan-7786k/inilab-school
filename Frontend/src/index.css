@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Breakpoint overrides & custom screen sizes */
+  --breakpoint-xs: 360px;
+  --breakpoint-xsm: 480px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Login page tokens */
+  --color-primary: #E04E00;
+  --color-secondary: #080B1C;
+  --color-bodyBg: #f4f3f0;
+  --color-adminBtn: #0077CD;
+  --color-teacherBtn: #0096B8;
+  --color-studentBtn: #6532FF;
+  --color-parentBtn: #009C22;
+  --color-accountantBtn: #E65C0B;
+  --color-librarianBtn: #8F3EFF;
+  --color-recepBtn: #E63878;
+
+  /* Dashboard high contrast tokens (+15% contrast boost) */
+  --color-sidebar: #192226;
+  --color-sidebarhover: #141c1f;
+  --color-sidebarborder: #111719;
+  --color-sidebartext: #d8e5ec;
+  --color-treeview: #212d32;
+  --color-treetext: #a5c3ce;
+  --color-bodybg: #e9ecef;
+  --color-mainbg: #f0f2f5;
+  --color-dark: #1a252f;
+  --color-muted: #3d484d;
+  --color-brdr: #cbd5e1;
+  --color-accent: #2b78a6;
+  --color-teal: #149c82;
+  --color-orangebox: #f08358;
+  --color-tealbox: #3fbfa6;
+  --color-pinkbox: #f24b83;
+  --color-purplebox: #8e76da;
+  --color-pinkhead: #a8356d;
+  --color-iconred: #d32f2f;
+  --color-noticestripe: #f1f3f5;
+  --color-action: #d62d7c;
+  --color-calbg: #e2e8f0;
+  --color-calbrdr: #cbd5e1;
+  --color-today: #ffe082;
+  --color-calblue: #2980b9;
+  --color-calblue2: #1f618d;
+  --color-badgeorange: #d68910;
+  --color-badgered: #c0392b;
+  --color-othermonth: #94a3b8;
+
+  --font-family-sans: 'Roboto', 'Open Sans', 'Inter', sans-serif;
+}
+
+:root {
+  --primary: #E04E00;
+  --secondary: #080B1C;
+}
+
+body {
+  font-family: 'Roboto', 'Open Sans', 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #1a252f;
+  filter: contrast(1.15);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Custom Responsive Table Utilities */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

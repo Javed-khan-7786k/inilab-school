@@ -1,0 +1,29 @@
+# IDE and Artifacts
+/.artifacts/
+/.idea/
+*.artifact.md
+/.vscode/
+.DS_Store
+
+# Dependencies
+node_modules/
+**/node_modules/
+node_modules/**
+
+# Environment and Secrets
+.env
+**/.env
+
+# Large/Dummy Data
+/Backend/uploads/images/
+/Frontend/testing Data/
+**/donne.zip
+*.zip
+*.rar
+*.log
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/

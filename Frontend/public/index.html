@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in</title>
+    
+    <!-- FAVICON -->
+    <link rel="shortcut icon" href="https://demo.eduking.xyz/uploads/images/site.png">
+    
+    <!-- FONTS & ICONS (Font Awesome 6 and custom Google Fonts via index.css) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+
+    <!-- TAILWIND PLAY CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FA5E01',
+                        secondary: '#0C1028',
+                        bodyBg: '#f8f7f6',
+                        adminBtn: '#008BF0',
+                        teacherBtn: '#00B2D9',
+                        studentBtn: '#7A4BFF',
+                        parentBtn: '#00BC29',
+                        accountantBtn: '#FF7624',
+                        librarianBtn: '#A55FFF',
+                        recepBtn: '#FF5391',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bodyBg text-[#41403F] min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
+
+    <!--=====================================
+                LOGIN PART START   
+    =======================================-->
+    <section class="w-full max-w-[933px] bg-white rounded-lg shadow-xl overflow-hidden my-8 md:my-12">
+        <div class="w-full flex flex-col md:flex-row">
+            
+            <!-- Login Content (Left Side) -->
+            <div class="w-full md:w-[450px] lg:w-[482px] shrink-0 p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+                <h3 class="text-[28px] sm:text-[35px] font-bold text-secondary mb-2 capitalize leading-tight">welcome back!</h3>
+                <p class="text-base text-[#7A6F69] mb-8">Please login to your account</p> 
+             
+                <form class="space-y-6 mb-8" method="post"> 
+                    <!-- Username field -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-secondary after:content-['*'] after:text-red-500 after:ml-0.5">User Name</label>
+                        <input class="block w-full px-4 py-3 text-sm text-secondary bg-white border border-[#ced4da] rounded-md transition duration-150 ease-in-out focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder-gray-400" 
+                               placeholder="Username" 
+                               name="username" 
+                               type="text" 
+                               autofocus="" 
+                               value="">
+                    </div>
+                    
+                    <!-- Password field -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-secondary after:content-['*'] after:text-red-500 after:ml-0.5">Password</label>
+                        <input class="block w-full px-4 py-3 text-sm text-secondary bg-white border border-[#ced4da] rounded-md transition duration-150 ease-in-out focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none placeholder-gray-400" 
+                               placeholder="Password" 
+                               name="password" 
+                               type="password">
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center cursor-pointer select-none text-secondary font-medium">
+                            <input type="checkbox" value="Remember Me" name="remember" class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2.5">
+                            <span>Remember Me</span>
+                        </label>
+                        <a class="text-secondary hover:text-primary transition duration-150 font-medium underline underline-offset-4" href="https://demo.eduking.xyz/reset/index">Forgot Password?</a>
+                    </div>
+                    
+                    <!-- Submit button -->
+                    <button type="submit" class="w-full py-3.5 bg-primary hover:bg-orange-600 active:bg-orange-700 text-white font-bold text-base rounded-md uppercase transition duration-150 ease-in-out tracking-wider shadow-md hover:shadow-lg">sign in</button>
+                </form>
+                
+                <!-- Demo login credentials section -->
+                <div class="border-t border-gray-100 pt-6">
+                    <h4 class="text-base font-semibold text-secondary mb-4">For Quick Demo Login Click Below...</h4>
+                    <nav class="flex flex-wrap gap-2.5">
+                        <button type="button" id="admin" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-adminBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">admin</button>
+                        <button type="button" id="teacher" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-teacherBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">teacher</button>
+                        <button type="button" id="student" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-studentBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">student</button>
+                        <button type="button" id="parent" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-parentBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">parent</button>
+                        <button type="button" id="accountant" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-accountantBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">accountant</button>
+                        <button type="button" id="librarian" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-librarianBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">Librarian</button>
+                        <button type="button" id="recep" class="text-xs sm:text-sm font-semibold px-4 py-2.5 rounded text-white bg-recepBtn hover:brightness-95 active:scale-95 transition-all duration-150 capitalize shadow-sm">Receptionist</button>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Login Banner (Right Side) -->
+            <div class="hidden md:block relative flex-auto min-h-[600px]">
+                <img src="https://demo.eduking.xyz/frontend/default/assets/images/login.jpg" alt="login" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute w-[85%] left-1/2 bottom-12 -translate-x-1/2 p-6 bg-white/75 backdrop-blur-[8px] rounded-lg border border-white/20 shadow-lg text-secondary">
+                    <blockquote class="text-lg lg:text-[22px] font-bold italic text-center mb-4 leading-relaxed">
+                        “Education is the most powerful weapon which can use to change the world.”
+                    </blockquote>
+                    <label class="block w-full text-sm lg:text-[18px] font-bold text-right">
+                        --Nelson Mandela
+                    </label>
+                </div>
+            </div>           
+            
+        </div>
+    </section>
+    <!--=====================================   
+                LOGIN PART END   
+    =======================================-->
+
+    <!--=====================================
+                JS LINK PART START
+    =======================================-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#admin').click(function() {
+                $("input[name=username]").val('admin');
+                $("input[name=password]").val('123456');
+            });
+            $('#teacher').click(function() {
+                $("input[name=username]").val('teacher1');
+                $("input[name=password]").val('123456');
+            });
+            $('#student').click(function() {
+                $("input[name=username]").val('student1');
+                $("input[name=password]").val('123456');
+            });
+            $('#parent').click(function() {
+                $("input[name=username]").val('parent1');
+                $("input[name=password]").val('123456');
+            });
+            $('#accountant').click(function() {
+                $("input[name=username]").val('accountant');
+                $("input[name=password]").val('123456');
+            });
+            $('#librarian').click(function() {
+                $("input[name=username]").val('librarian');
+                $("input[name=password]").val('123456');
+            });
+            $('#recep').click(function() {
+                $("input[name=username]").val('receptionist');
+                $("input[name=password]").val('123456');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# IDE and Artifacts
+.artifacts/
+.idea/
+*.artifact.md
+.vscode/
+.DS_Store
+
+# Dependencies
+node_modules/
+**/node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+
+# Environment and Secrets
+.env
+**/.env
+Backend/.env
+Frontend/.env
+
+# Uploads & Build outputs
+Backend/uploads/
+uploads/
+**/uploads/
+dist/
+**/dist/
+build/
+**/build/
+*.log
