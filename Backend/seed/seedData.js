@@ -10,6 +10,19 @@ import Event from "../src/models/Event.js";
 import Holiday from "../src/models/Holiday.js";
 import Leave from "../src/models/Leave.js";
 import Document from "../src/models/Document.js";
+import ClassModel from "../src/models/ClassModel.js";
+import SectionModel from "../src/models/SectionModel.js";
+import SubjectModel from "../src/models/SubjectModel.js";
+import SyllabusModel from "../src/models/SyllabusModel.js";
+import AssignmentModel from "../src/models/AssignmentModel.js";
+import RoutineModel from "../src/models/RoutineModel.js";
+import ExamModel from "../src/models/ExamModel.js";
+import ExamScheduleModel from "../src/models/ExamScheduleModel.js";
+import GradeModel from "../src/models/GradeModel.js";
+import ExamAttendanceModel from "../src/models/ExamAttendanceModel.js";
+import MarkModel from "../src/models/MarkModel.js";
+import MarkDistributionModel from "../src/models/MarkDistributionModel.js";
+import PromotionSettingModel from "../src/models/PromotionSettingModel.js";
 
 dotenv.config();
 
@@ -268,6 +281,334 @@ const seedDB = async () => {
     // Seed Documents
     await Document.insertMany(mockDocuments);
     console.log(`Seeded ${mockDocuments.length} documents successfully.`);
+
+    // Seed Classes
+    await ClassModel.deleteMany({});
+    const mockClasses = [
+      { name: "One", classNumeric: 1, teacherName: "Alisha Henry", note: "Class one" },
+      { name: "Two", classNumeric: 2, teacherName: "Jordan Mitchell", note: "Class two" },
+      { name: "Three", classNumeric: 3, teacherName: "Jordan Mitchell", note: "Class three" },
+      { name: "Four", classNumeric: 4, teacherName: "Maisie Pollard", note: "Class four" },
+      { name: "Five", classNumeric: 5, teacherName: "Mia O'Donnell", note: "Class five" },
+      { name: "Graduate", classNumeric: 6, teacherName: "Naomi Doyle", note: "Class graduate" }
+    ];
+    await ClassModel.insertMany(mockClasses);
+    console.log(`Seeded ${mockClasses.length} classes successfully.`);
+
+    // Seed Sections
+    await SectionModel.deleteMany({});
+    const mockSections = [
+      { name: "A", category: "Academic", capacity: 40, className: "One", teacherName: "Alisha Henry", note: "Section A" },
+      { name: "B", category: "Academic", capacity: 35, className: "One", teacherName: "John Doe", note: "Section B" },
+      { name: "A", category: "Academic", capacity: 45, className: "Two", teacherName: "Jordan Mitchell", note: "Section A" },
+      { name: "A", category: "Academic", capacity: 40, className: "Three", teacherName: "Emma Watson", note: "Section A" },
+      { name: "B", category: "Academic", capacity: 50, className: "Three", teacherName: "Bruce Wayne", note: "Section B" }
+    ];
+    await SectionModel.insertMany(mockSections);
+    console.log(`Seeded ${mockSections.length} sections successfully.`);
+
+    // Seed Subjects
+    await SubjectModel.deleteMany({});
+    const mockSubjects = [
+      { name: "Mathematics", author: "R.D. Sharma", code: "MATH101", className: "One", teacherName: "Alisha Henry", passMark: 33, finalMark: 100 },
+      { name: "English Grammar", author: "Wren & Martin", code: "ENG101", className: "One", teacherName: "Jordan Mitchell", passMark: 33, finalMark: 100 },
+      { name: "Science", author: "NCERT", code: "SCI101", className: "One", teacherName: "Maisie Pollard", passMark: 33, finalMark: 100 },
+      { name: "Mathematics II", author: "R.D. Sharma", code: "MATH201", className: "Two", teacherName: "Alisha Henry", passMark: 33, finalMark: 100 },
+      { name: "Social Studies", author: "Oxford", code: "SST201", className: "Two", teacherName: "Mia O'Donnell", passMark: 33, finalMark: 100 }
+    ];
+    await SubjectModel.insertMany(mockSubjects);
+    console.log(`Seeded ${mockSubjects.length} subjects successfully.`);
+
+    // Seed Syllabuses
+    await SyllabusModel.deleteMany({});
+    const mockSyllabuses = [
+      { title: "First Term Science Syllabus", description: "Chapters 1 to 5 covering basic physics & chemistry concepts", date: "02 Aug 2026", uploader: "Admin", file: "syllabus_term1_science.pdf", className: "One" },
+      { title: "Mid-Term Mathematics Syllabus", description: "Algebra, Geometry and Arithmetic basics", date: "01 Aug 2026", uploader: "Alisha Henry", file: "math_midterm.pdf", className: "One" },
+      { title: "English Literature Outline", description: "Stories, Poems and Essay writing topics", date: "28 Jul 2026", uploader: "Jordan Mitchell", file: "english_syllabus.pdf", className: "Two" }
+    ];
+    await SyllabusModel.insertMany(mockSyllabuses);
+    console.log(`Seeded ${mockSyllabuses.length} syllabuses successfully.`);
+
+    // Seed Assignments
+    await AssignmentModel.deleteMany({});
+    const mockAssignments = [
+      {
+        title: "Algebra Worksheet #1",
+        description: "Solve problems from chapter 3 exercises 1 to 15",
+        deadline: "15 Aug 2026",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        uploader: "Alisha Henry",
+        file: "algebra_worksheet1.pdf"
+      },
+      {
+        title: "English Grammar Essay",
+        description: "Write an essay of 250 words on 'My Favorite Season'",
+        deadline: "18 Aug 2026",
+        className: "One",
+        sectionName: "B",
+        subjectName: "English Grammar",
+        uploader: "Jordan Mitchell",
+        file: "essay_instructions.pdf"
+      },
+      {
+        title: "Science Experiment Report",
+        description: "Prepare a lab report on plant photosynthesis experiment",
+        deadline: "20 Aug 2026",
+        className: "Two",
+        sectionName: "A",
+        subjectName: "Science",
+        uploader: "Admin",
+        file: "lab_report_format.pdf"
+      }
+    ];
+    await AssignmentModel.insertMany(mockAssignments);
+    console.log(`Seeded ${mockAssignments.length} assignments successfully.`);
+
+    // Seed Routines
+    await RoutineModel.deleteMany({});
+    const mockRoutines = [
+      {
+        schoolYear: "2025-2026 (Default)",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        day: "Monday",
+        teacherName: "Alisha Henry",
+        startingTime: "08:45 AM",
+        endingTime: "09:30 AM",
+        room: "101"
+      },
+      {
+        schoolYear: "2025-2026 (Default)",
+        className: "One",
+        sectionName: "A",
+        subjectName: "English Grammar",
+        day: "Monday",
+        teacherName: "Jordan Mitchell",
+        startingTime: "09:30 AM",
+        endingTime: "10:15 AM",
+        room: "101"
+      },
+      {
+        schoolYear: "2025-2026 (Default)",
+        className: "Two",
+        sectionName: "A",
+        subjectName: "Science",
+        day: "Tuesday",
+        teacherName: "Maisie Pollard",
+        startingTime: "10:30 AM",
+        endingTime: "11:15 AM",
+        room: "102"
+      }
+    ];
+    await RoutineModel.insertMany(mockRoutines);
+    console.log(`Seeded ${mockRoutines.length} routines successfully.`);
+
+    // Seed Exams
+    await ExamModel.deleteMany({});
+    const mockExams = [
+      { name: "First Semester", date: "01 Jan 2025", note: "Don't delete it!" },
+      { name: "Second Semester", date: "01 Mar 2025", note: "" },
+      { name: "Third Semester", date: "31 Dec 2025", note: "" }
+    ];
+    await ExamModel.insertMany(mockExams);
+    console.log(`Seeded ${mockExams.length} exams successfully.`);
+
+    // Seed Exam Schedules
+    await ExamScheduleModel.deleteMany({});
+    const mockExamSchedules = [
+      {
+        examName: "First Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        date: "10 Jan 2025",
+        time: "09:00 AM - 12:00 PM",
+        room: "101"
+      },
+      {
+        examName: "First Semester",
+        className: "One",
+        sectionName: "B",
+        subjectName: "English Grammar",
+        date: "12 Jan 2025",
+        time: "09:00 AM - 12:00 PM",
+        room: "102"
+      },
+      {
+        examName: "Second Semester",
+        className: "Two",
+        sectionName: "A",
+        subjectName: "Science",
+        date: "05 Mar 2025",
+        time: "10:00 AM - 01:00 PM",
+        room: "103"
+      }
+    ];
+    await ExamScheduleModel.insertMany(mockExamSchedules);
+    console.log(`Seeded ${mockExamSchedules.length} exam schedules successfully.`);
+
+    // Seed Grades
+    await GradeModel.deleteMany({});
+    const mockGrades = [
+      { gradeName: "A+", gradePoint: "5.00", markFrom: 80, markUpto: 100, note: "Excellent" },
+      { gradeName: "A", gradePoint: "4.00", markFrom: 70, markUpto: 79, note: "Well Done" },
+      { gradeName: "A-", gradePoint: "3.50", markFrom: 60, markUpto: 69, note: "Not bad but need to focus more" },
+      { gradeName: "B", gradePoint: "3.00", markFrom: 50, markUpto: 59, note: "Average" },
+      { gradeName: "C", gradePoint: "2.50", markFrom: 40, markUpto: 49, note: "Below Average" },
+      { gradeName: "D", gradePoint: "2.00", markFrom: 33, markUpto: 39, note: "Bad" },
+      { gradeName: "F", gradePoint: "0.00", markFrom: 0, markUpto: 32, note: "Very Bad" }
+    ];
+    await GradeModel.insertMany(mockGrades);
+    console.log(`Seeded ${mockGrades.length} grades successfully.`);
+
+    // Seed Exam Attendances
+    await ExamAttendanceModel.deleteMany({});
+    const mockExamAttendances = [
+      {
+        examName: "First Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        studentName: "John Doe",
+        roll: "101",
+        email: "john@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
+        status: "Present"
+      },
+      {
+        examName: "First Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        studentName: "Jane Smith",
+        roll: "102",
+        email: "jane@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
+        status: "Absent"
+      },
+      {
+        examName: "First Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Mathematics",
+        studentName: "Michael Brown",
+        roll: "103",
+        email: "michael@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
+        status: "Late"
+      }
+    ];
+    await ExamAttendanceModel.insertMany(mockExamAttendances);
+    console.log(`Seeded ${mockExamAttendances.length} exam attendances successfully.`);
+
+    // Seed Marks
+    await MarkModel.deleteMany({});
+    const mockMarks = [
+      {
+        examName: "Second Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Bangla",
+        studentName: "Brady Harris",
+        roll: "1",
+        email: "brady@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Brady",
+        examMark: 30,
+        attendanceMark: 4,
+        classTestMark: 5,
+        assignmentMark: 8,
+        totalMark: 47
+      },
+      {
+        examName: "Second Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Bangla",
+        studentName: "Demi Wilson",
+        roll: "2",
+        email: "demi@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Demi",
+        examMark: 19,
+        attendanceMark: 8,
+        classTestMark: 0,
+        assignmentMark: 1,
+        totalMark: 28
+      },
+      {
+        examName: "Second Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Bangla",
+        studentName: "Kade Watson",
+        roll: "3",
+        email: "kade@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kade",
+        examMark: 54,
+        attendanceMark: 7,
+        classTestMark: 9,
+        assignmentMark: 2,
+        totalMark: 72
+      },
+      {
+        examName: "Second Semester",
+        className: "One",
+        sectionName: "A",
+        subjectName: "Bangla",
+        studentName: "August Fowler",
+        roll: "4",
+        email: "august@example.com",
+        photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=August",
+        examMark: 9,
+        attendanceMark: 9,
+        classTestMark: 5,
+        assignmentMark: 10,
+        totalMark: 33
+      }
+    ];
+    await MarkModel.insertMany(mockMarks);
+    console.log(`Seeded ${mockMarks.length} marks successfully.`);
+
+    // Seed Mark Distributions
+    await MarkDistributionModel.deleteMany({});
+    const mockMarkDistributions = [
+      { markDistributionType: "Exam", markValue: 70 },
+      { markDistributionType: "Attendance", markValue: 10 },
+      { markDistributionType: "Class Test", markValue: 10 },
+      { markDistributionType: "Assignment", markValue: 10 },
+      { markDistributionType: "Practical", markValue: 10 },
+      { markDistributionType: "Quiz Test", markValue: 10 },
+      { markDistributionType: "Lab Report", markValue: 10 },
+      { markDistributionType: "Exam", markValue: 100 },
+      { markDistributionType: "Exam", markValue: 30 },
+      { markDistributionType: "Exam", markValue: 40 }
+    ];
+    await MarkDistributionModel.insertMany(mockMarkDistributions);
+    console.log(`Seeded ${mockMarkDistributions.length} mark distributions successfully.`);
+
+    // Seed Promotion Setting
+    await PromotionSettingModel.deleteMany({});
+    const mockPromotionSetting = {
+      academicYear: "2025-2026",
+      className: "One",
+      promotionAcademicYear: "2026-2027",
+      promotionClassName: "Two",
+      promotionType: "Normal",
+      selectedExams: ["First Semester", "Second Semester", "Third Semester"],
+      subjectPassMarks: {
+        English: 33,
+        Bangla: 33,
+        Drawing: 33,
+        "Math Matrix": 33,
+        Science: 25,
+        Math: 33,
+        ICT: 33,
+      },
+    };
+    await PromotionSettingModel.create(mockPromotionSetting);
+    console.log("Seeded promotion setting successfully.");
 
     console.log("Database Seeding Completed Successfully! 🎉");
     process.exit(0);

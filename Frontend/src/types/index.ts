@@ -59,6 +59,79 @@ export interface NoticeItem {
   targetRoles?: string[];
 }
 
+export interface MailSMSItem {
+  id: string | number;
+  role: string;
+  users: string;
+  type: string;
+  dateTime: string;
+  message: string;
+}
+
+export interface QuestionGroupItem {
+  id: string | number;
+  title: string;
+}
+
+export interface QuestionLevelItem {
+  id: string | number;
+  title: string;
+}
+
+export interface QuestionBankItem {
+  id: string | number;
+  difficultyLevel: string;
+  question: string;
+  questionGroup: string;
+  questionType: string;
+  explanation?: string;
+  mark?: number;
+}
+
+export interface OnlineExamItem {
+  id: string | number;
+  examTitle: string;
+  examStatus: string;
+  date: string;
+  published: boolean;
+}
+
+export interface InstructionItem {
+  id: string | number;
+  title: string;
+  content: string;
+}
+
+export interface TakeExamItem {
+  id: string | number;
+  name: string;
+  examStatus: string;
+  duration: string;
+  date: string;
+}
+
+export interface SalaryTemplateItem {
+  id: string | number;
+  salaryGrade: string;
+  basicSalary: string;
+  overtimeRate: string;
+}
+
+export interface HourlyTemplateItem {
+  id: string | number;
+  hourlyGrade: string;
+  hourlyRate: string;
+}
+
+export interface OvertimeItem {
+  id: string | number;
+  role: string;
+  user: string;
+  date: string;
+  hours: string;
+  totalAmount: string;
+}
+
 export interface EventItem {
   id: string | number;
   title: string;
@@ -119,6 +192,183 @@ export interface UserItem {
   role: string;
 }
 
+export interface StaffListItem {
+  id: string | number;
+  rawId: string | number;
+  photo: string;
+  name: string;
+  email: string;
+  role: string;
+  designation?: string;
+  type: 'teacher' | 'user';
+  status?: string;
+}
+
+export interface ClassItem {
+  id: string | number;
+  name: string;
+  classNumeric: number | string;
+  teacherName: string;
+  teacherId?: string;
+  note?: string;
+}
+
+export interface SectionItem {
+  id: string | number;
+  name: string;
+  category: string;
+  capacity: number | string;
+  className: string;
+  classId?: string;
+  teacherName: string;
+  teacherId?: string;
+  note?: string;
+}
+
+export interface SubjectItem {
+  id: string | number;
+  name: string;
+  author?: string;
+  code: string;
+  className: string;
+  classId?: string;
+  teacherName: string;
+  teacherId?: string;
+  passMark: number | string;
+  finalMark: number | string;
+}
+
+export interface SyllabusItem {
+  id: string | number;
+  title: string;
+  description?: string;
+  date: string;
+  uploader: string;
+  file?: string;
+  className: string;
+  classId?: string;
+}
+
+export interface AssignmentItem {
+  id: string | number;
+  title: string;
+  description: string;
+  deadline: string;
+  className: string;
+  classId?: string;
+  sectionName?: string;
+  sectionId?: string;
+  subjectName: string;
+  subjectId?: string;
+  uploader: string;
+  file?: string;
+}
+
+export interface RoutineItem {
+  id: string | number;
+  schoolYear: string;
+  className: string;
+  classId?: string;
+  sectionName: string;
+  sectionId?: string;
+  subjectName: string;
+  subjectId?: string;
+  day: string;
+  teacherName: string;
+  teacherId?: string;
+  startingTime: string;
+  endingTime: string;
+  room: string;
+}
+
+export interface ExamItem {
+  id: string | number;
+  name: string;
+  date: string;
+  note?: string;
+}
+
+export interface ExamScheduleItem {
+  id: string | number;
+  examName: string;
+  examId?: string;
+  className: string;
+  classId?: string;
+  sectionName: string;
+  sectionId?: string;
+  subjectName: string;
+  subjectId?: string;
+  date: string;
+  time: string;
+  room: string;
+}
+
+export interface GradeItem {
+  id: string | number;
+  gradeName: string;
+  gradePoint: string;
+  markFrom: number | string;
+  markUpto: number | string;
+  note?: string;
+}
+
+export interface ExamAttendanceItem {
+  id: string | number;
+  examName: string;
+  examId?: string;
+  className: string;
+  classId?: string;
+  sectionName?: string;
+  sectionId?: string;
+  subjectName: string;
+  subjectId?: string;
+  studentId?: string;
+  studentName: string;
+  roll: string;
+  email: string;
+  photo?: string;
+  status: "Present" | "Absent" | "Late";
+}
+
+export interface MarkItem {
+  id: string | number;
+  examName: string;
+  examId?: string;
+  className: string;
+  classId?: string;
+  sectionName?: string;
+  sectionId?: string;
+  subjectName: string;
+  subjectId?: string;
+  studentId?: string;
+  studentName: string;
+  roll: string;
+  email: string;
+  photo?: string;
+  examMark: number;
+  attendanceMark: number;
+  classTestMark: number;
+  assignmentMark: number;
+  totalMark?: number;
+}
+
+export interface MarkDistributionItem {
+  id: string | number;
+  markDistributionType: string;
+  markValue: number | string;
+}
+
+export interface PromotionSettingItem {
+  id?: string;
+  academicYear: string;
+  className: string;
+  promotionAcademicYear: string;
+  promotionClassName: string;
+  promotionType: "Normal" | "Advance";
+  selectedExams?: string[];
+  subjectPassMarks?: Record<string, number | string>;
+}
+
 export interface Enquiry {
   id: string | number;
   studentName: string;
@@ -144,6 +394,7 @@ export interface Enquiry {
   pinCode: string;
   
   childAadhaar?: string;
+  stream?: string;
   aparId?: string;
   penNumber?: string;
   
@@ -168,6 +419,9 @@ export interface Student {
   roll: string;
   email: string;
   className: string;
+  stream?: string;
+  sectionName?: string;
+  avatar?: string;
 
   // Extended admission profile (optional — filled when added via full Student form)
   dob?: string;

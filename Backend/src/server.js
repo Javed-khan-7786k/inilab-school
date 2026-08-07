@@ -7,9 +7,9 @@ import routes from "./routes/index.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 import ApiError from "./utils/ApiError.js";
-import dns from 'dns'
-dns.setServers(['8.8.8.8','8.8.4.4'])
-// Load environment variables
+// import dns from 'dns'
+// dns.setServers(['8.8.8.8','8.8.4.4'])
+// // Load environment variables
 dotenv.config();
 
 // Connect to MongoDB

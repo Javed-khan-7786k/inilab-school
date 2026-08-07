@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import type { Message } from '../../pages/MessagePage';
+import type { Message } from '../../pages';
 
 interface MessageTableContentProps {
   messages: Message[];

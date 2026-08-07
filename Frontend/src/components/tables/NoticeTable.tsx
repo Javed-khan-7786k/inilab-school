@@ -16,11 +16,12 @@ import { noticeApi } from "../../services/api/noticeApi";
 
 interface NoticeTableProps {
   notices?: NoticeData[];
+  limit?: number;
 }
 
-export function NoticeTable({ notices: initialNotices }: NoticeTableProps) {
+export function NoticeTable({ notices: initialNotices, limit = 5 }: NoticeTableProps) {
   const { t } = useLanguage();
-  const [notices, setNotices] = useState<NoticeData[]>(initialNotices || []);
+  const [notices, setNotices] = useState<NoticeData[]>((initialNotices || []).slice(0, limit));
   const [selectedNotice, setSelectedNotice] = useState<NoticeData | null>(null);
 
   useEffect(() => {
@@ -36,18 +37,18 @@ export function NoticeTable({ notices: initialNotices }: NoticeTableProps) {
             notice: item.notice,
             date: item.date,
           }));
-          setNotices(mapped);
+          setNotices(mapped.slice(0, limit));
         } else if (initialNotices && initialNotices.length > 0) {
-          setNotices(initialNotices);
+          setNotices(initialNotices.slice(0, limit));
         }
       } catch (err) {
         console.warn("NoticeTable: Failed fetching DB notices, using fallback props", err);
-        if (initialNotices) setNotices(initialNotices);
+        if (initialNotices) setNotices(initialNotices.slice(0, limit));
       }
     };
 
     fetchLiveNotices();
-  }, [initialNotices]);
+  }, [initialNotices, limit]);
 
   return (
     <PanelCard title={t("Notice")}>

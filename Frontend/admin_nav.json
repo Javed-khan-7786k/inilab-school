@@ -1,0 +1,908 @@
+[
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-laptop",
+      "label": "Dashboard",
+      "href": "/dashboard"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-users",
+      "label": "Student",
+      "href": "/dashboard/student"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-user",
+      "label": "Parents",
+      "href": "/dashboard/parents"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-user-secret",
+      "label": "Teacher",
+      "href": "/dashboard/teacher"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-user",
+      "label": "Staff",
+      "href": "/dashboard/staff"
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-book",
+      "label": "Academic",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Class",
+          "href": "/dashboard/academic/class"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Section",
+          "href": "/dashboard/academic/section"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Subject",
+          "href": "/dashboard/academic/subject"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Syllabus",
+          "href": "/dashboard/academic/syllabus"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Assignments",
+          "href": "/dashboard/academic/assignments"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Routine",
+          "href": "/dashboard/academic/routine"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-calendar",
+      "label": "Attendance",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Student Attendance",
+          "href": "/dashboard/attendance/student-attendance"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Staff Attendance",
+          "href": "/dashboard/attendance/staff-attendance"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-pencil",
+      "label": "Exam",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Exam",
+          "href": "/dashboard/exam/exam"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Exam Schedule",
+          "href": "/dashboard/exam/exam-schedule"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Grade",
+          "href": "/dashboard/exam/grade"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Exam Attendance",
+          "href": "/dashboard/exam/exam-attendance"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-flask",
+      "label": "Mark",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Mark",
+          "href": "/dashboard/mark/mark"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Mark Distribution",
+          "href": "/dashboard/mark/mark-distribution"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Promotion",
+          "href": "/dashboard/mark/promotion"
+        }
+      ]
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-envelope",
+      "label": "Message",
+      "href": "/dashboard/message"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-camera",
+      "label": "Media",
+      "href": "/dashboard/media"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-paper-plane",
+      "label": "Mail / SMS",
+      "href": "/dashboard/mail-sms"
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-internet-explorer",
+      "label": "Online Exam",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Question Group",
+          "href": "/dashboard/online-exam/question-group"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Question Level",
+          "href": "/dashboard/online-exam/question-level"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Question Bank",
+          "href": "/dashboard/online-exam/question-bank"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Online Exam",
+          "href": "/dashboard/online-exam/online-exam"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Instruction",
+          "href": "/dashboard/online-exam/instruction"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Take Exam",
+          "href": "/dashboard/online-exam/take-exam"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-money",
+      "label": "Payroll",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Salary Template",
+          "href": "/dashboard/payroll/salary-template"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Hourly Template",
+          "href": "/dashboard/payroll/hourly-template"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Manage Salary",
+          "href": "/dashboard/payroll/manage-salary"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Make Payments",
+          "href": "/dashboard/payroll/make-payments"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Overtime",
+          "href": "/dashboard/payroll/overtime"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-archive",
+      "label": "Asset Management",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Vendor",
+          "href": "/dashboard/asset-management/vendor"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Location",
+          "href": "/dashboard/asset-management/location"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Asset Category",
+          "href": "/dashboard/asset-management/asset-category"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Asset",
+          "href": "/dashboard/asset-management/asset"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Asset Assignments",
+          "href": "/dashboard/asset-management/asset-assignments"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Purchase",
+          "href": "/dashboard/asset-management/purchase"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-inbox",
+      "label": "Inventory",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Category",
+          "href": "/dashboard/inventory/category"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Product",
+          "href": "/dashboard/inventory/product"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Warehouse",
+          "href": "/dashboard/inventory/warehouse"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Supplier",
+          "href": "/dashboard/inventory/supplier"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Purchase",
+          "href": "/dashboard/inventory/purchase"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Sale",
+          "href": "/dashboard/inventory/sale"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-rocket",
+      "label": "Leave Application",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Leave Category",
+          "href": "/dashboard/leave-application/leave-category"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Leave Assign",
+          "href": "/dashboard/leave-application/leave-assign"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Leave Apply",
+          "href": "/dashboard/leave-application/leave-apply"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Leave Application",
+          "href": "/dashboard/leave-application/leave-application"
+        }
+      ]
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-youtube-play",
+      "label": "Tutorial",
+      "href": "/dashboard/tutorial"
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-video-camera",
+      "label": "gmeetliveclass",
+      "href": "/dashboard/gmeetliveclass"
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-child",
+      "label": "Child",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Activities Category",
+          "href": "/dashboard/child/activities-category"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Activities",
+          "href": "/dashboard/child/activities"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Child Care",
+          "href": "/dashboard/child/child-care"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-book",
+      "label": "Library",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Member",
+          "href": "/dashboard/library/member"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Books",
+          "href": "/dashboard/library/books"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Issue",
+          "href": "/dashboard/library/issue"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "E-Books",
+          "href": "/dashboard/library/e-books"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-bus",
+      "label": "Transport",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Transport",
+          "href": "/dashboard/transport/transport"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Member",
+          "href": "/dashboard/transport/member"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-building",
+      "label": "Hostel",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Hostel",
+          "href": "/dashboard/hostel/hostel"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Category",
+          "href": "/dashboard/hostel/category"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Member",
+          "href": "/dashboard/hostel/member"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-handshake-o",
+      "label": "Sponsorship",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Candidate",
+          "href": "/dashboard/sponsorship/candidate"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Sponsor",
+          "href": "/dashboard/sponsorship/sponsor"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Sponsorship",
+          "href": "/dashboard/sponsorship/sponsorship"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-briefcase",
+      "label": "Account",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Fee Types",
+          "href": "/dashboard/account/fee-types"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Invoice",
+          "href": "/dashboard/account/invoice"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Payment History",
+          "href": "/dashboard/account/payment-history"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Expense",
+          "href": "/dashboard/account/expense"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Income",
+          "href": "/dashboard/account/income"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Global Payment",
+          "href": "/dashboard/account/global-payment"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-bullhorn",
+      "label": "Announcement",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Notice",
+          "href": "/dashboard/announcement/notice"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Events",
+          "href": "/dashboard/announcement/events"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Holiday",
+          "href": "/dashboard/announcement/holiday"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-file-text",
+      "label": "Report",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Class Report",
+          "href": "/dashboard/report/class-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Sponsorship Report",
+          "href": "/dashboard/report/sponsorship-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Student Report",
+          "href": "/dashboard/report/student-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "ID Card Report",
+          "href": "/dashboard/report/id-card-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Admit Card Report",
+          "href": "/dashboard/report/admit-card-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Routine Report",
+          "href": "/dashboard/report/routine-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Exam Schedule Report",
+          "href": "/dashboard/report/exam-schedule-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Attendance Report",
+          "href": "/dashboard/report/attendance-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Attendance Overview Report",
+          "href": "/dashboard/report/attendance-overview-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Library Books Report",
+          "href": "/dashboard/report/library-books-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Library Card Report",
+          "href": "/dashboard/report/library-card-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Library Book Issue Report",
+          "href": "/dashboard/report/library-book-issue-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Personal Report",
+          "href": "/dashboard/report/personal-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Mark Usage Report",
+          "href": "/dashboard/report/mark-usage-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Tabulation Sheet Report",
+          "href": "/dashboard/report/tabulation-sheet-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Mark Sheet Report",
+          "href": "/dashboard/report/mark-sheet-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Progress Card Report",
+          "href": "/dashboard/report/progress-card-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Teacher Gender Report",
+          "href": "/dashboard/report/teacher-gender-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Online Exam Report",
+          "href": "/dashboard/report/online-exam-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Online Exam Question Report",
+          "href": "/dashboard/report/online-exam-question-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Online Exam Question Answers Report",
+          "href": "/dashboard/report/online-exam-question-answers-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Online Admission Report",
+          "href": "/dashboard/report/online-admission-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Certificate Report",
+          "href": "/dashboard/report/certificate-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Leave Application Report",
+          "href": "/dashboard/report/leave-application-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Product Purchase Report",
+          "href": "/dashboard/report/product-purchase-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Product Sale Report",
+          "href": "/dashboard/report/product-sale-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Academic Payment Fees Report",
+          "href": "/dashboard/report/academic-payment-fees-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Fees Report",
+          "href": "/dashboard/report/fees-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Due Fees Report",
+          "href": "/dashboard/report/due-fees-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Balance Fees Report",
+          "href": "/dashboard/report/balance-fees-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Transaction Report",
+          "href": "/dashboard/report/transaction-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Students Fine Report",
+          "href": "/dashboard/report/students-fine-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Overview Report",
+          "href": "/dashboard/report/overview-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Salary Report",
+          "href": "/dashboard/report/salary-report"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Account Ledger Report",
+          "href": "/dashboard/report/account-ledger-report"
+        }
+      ]
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-user-plus",
+      "label": "Online Admission",
+      "href": "/dashboard/online-admission"
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-cogs",
+      "label": "Administrator",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Academic Year",
+          "href": "/dashboard/administrator/academic-year"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Student Group",
+          "href": "/dashboard/administrator/student-group"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Complaint",
+          "href": "/dashboard/administrator/complaint"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Purchase Template",
+          "href": "/dashboard/administrator/purchase-template"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Reset Admin",
+          "href": "/dashboard/administrator/reset-admin"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Passcode",
+          "href": "/dashboard/administrator/passcode"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Make Login Templates",
+          "href": "/dashboard/administrator/make-login-templates"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Import",
+          "href": "/dashboard/administrator/import"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Backup",
+          "href": "/dashboard/administrator/backup"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Mail Log",
+          "href": "/dashboard/administrator/mail-log"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Auto Logout",
+          "href": "/dashboard/administrator/auto-logout"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-desktop",
+      "label": "Frontend",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "Visitor Comments",
+          "href": "/dashboard/frontend/visitor-comments"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Take Exam Frontend",
+          "href": "/dashboard/frontend/take-exam-frontend"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Pages",
+          "href": "/dashboard/frontend/pages"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Library Frontend",
+          "href": "/dashboard/frontend/library-frontend"
+        }
+      ]
+    }
+  },
+  {
+    "type": "treeview",
+    "data": {
+      "icon": "fa-cog",
+      "label": "Settings",
+      "defaultOpen": false,
+      "children": [
+        {
+          "icon": "fa-circle-o",
+          "label": "General Setting",
+          "href": "/dashboard/settings/general-setting"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Financial Settings",
+          "href": "/dashboard/settings/financial-settings"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Payment Settings",
+          "href": "/dashboard/settings/payment-settings"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "SMS Settings",
+          "href": "/dashboard/settings/sms-settings"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Email Setting",
+          "href": "/dashboard/settings/email-setting"
+        },
+        {
+          "icon": "fa-circle-o",
+          "label": "Mock Setting",
+          "href": "/dashboard/settings/mock-setting"
+        }
+      ]
+    }
+  },
+  {
+    "type": "link",
+    "data": {
+      "icon": "fa-list",
+      "label": "Current Enquiries",
+      "href": "/dashboard/current-enquiries"
+    }
+  }
+]

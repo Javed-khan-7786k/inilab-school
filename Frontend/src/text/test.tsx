@@ -1,2 +1,2 @@
-import { MessagePage } from '../pages/MessagePage';
+import { MessagePage } from '../pages';
 export default MessagePage;

@@ -16,13 +16,13 @@ interface NavbarProps {
 
 export function Navbar({ onToggleSidebar, userName, userAvatarUrl }: NavbarProps) {
   return (
-    <div className="sticky top-0 z-[100] flex h-[50px] flex-1 items-center bg-white shadow-[0_1px_2px_rgba(0,0,0,.04)]">
+    <div className="sticky top-0 z-[100] flex h-[50px] flex-1 items-center bg-white border-b border-brdr shadow-[0_1px_2px_rgba(0,0,0,.04)]">
       {/* Brand Header Box */}
       <div className="fixed left-0 top-0 z-[120] flex h-[50px] w-[180px] sm:w-[230px] items-center border-b border-brdr bg-white pl-[15px] text-[16px] sm:text-[18px] font-semibold text-dark select-none truncate">
         KanakLabs School
       </div>
 
-      {/* Hamburger Sidebar Toggle Button (Positioned cleanly right after Brand box without overlap) */}
+      {/* Hamburger Sidebar Toggle Button */}
       <button
         type="button"
         aria-label="Toggle sidebar"
@@ -34,7 +34,7 @@ export function Navbar({ onToggleSidebar, userName, userAvatarUrl }: NavbarProps
       </button>
 
       {/* Right Navbar Icons & Menus */}
-      <div className="ml-auto flex items-center pr-[15px] max-md:pr-[5px]">
+      <div className="ml-auto flex items-center pr-[15px] max-md:pr-[5px] gap-1">
         <NavbarIconLink icon="fa-globe" href="#" hiddenOnMobile />
         <NavbarIconLink
           icon="fa-bell"
