@@ -3,7 +3,6 @@ import type { SidebarEntry } from "./LibrariandashboardData";
 export const sidebarMenuItems: SidebarEntry[] = [
   { type: "link", data: { icon: "fa-laptop", label: "Dashboard", href: "/dashboard", isActive: true } },
   { type: "link", data: { icon: "fa-user", label: "Student", href: "/dashboard/student" } },
-  { type: "link", data: { icon: "fa-user", label: "Parents", href: "/dashboard/parents" } },
   { type: "link", data: { icon: "fa-users", label: "Staff", href: "/dashboard/staff" } },
   {
     type: "treeview",
@@ -62,24 +61,7 @@ export const sidebarMenuItems: SidebarEntry[] = [
     },
   },
   { type: "link", data: { icon: "fa-envelope", label: "Message", href: "/dashboard/message" } },
-  { type: "link", data: { icon: "fa-camera", label: "Media", href: "/dashboard/media" } },
   { type: "link", data: { icon: "fa-paper-plane", label: "Mail / SMS", href: "/dashboard/mail-sms" } },
-  {
-    type: "treeview",
-    data: {
-      icon: "fa-laptop",
-      label: "Online Exam",
-      defaultOpen: false,
-      children: [
-        { icon: "fa-folder", label: "Question Group", href: "/dashboard/online-exam/question-group" },
-        { icon: "fa-signal", label: "Question Level", href: "/dashboard/online-exam/question-level" },
-        { icon: "fa-database", label: "Question Bank", href: "/dashboard/online-exam/question-bank" },
-        { icon: "fa-file-text", label: "Online Exam", href: "/dashboard/online-exam" },
-        { icon: "fa-info-circle", label: "Instruction", href: "/dashboard/online-exam/instruction" },
-        { icon: "fa-edit", label: "Take Exam", href: "/dashboard/online-exam/take-exam" },
-      ],
-    },
-  },
   {
     type: "treeview",
     data: {
@@ -141,21 +123,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
       ],
     },
   },
-  { type: "link", data: { icon: "fa-video-camera", label: "Tutorial", href: "/dashboard/tutorial" } },
-  { type: "link", data: { icon: "fa-video-camera", label: "gmeetliveclass", href: "/dashboard/gmeetliveclass" } },
-  {
-    type: "treeview",
-    data: {
-      icon: "fa-child",
-      label: "Child",
-      defaultOpen: false,
-      children: [
-        { icon: "fa-list", label: "Activities Category", href: "/dashboard/child/activities-category" },
-        { icon: "fa-gamepad", label: "Activities", href: "/dashboard/child/activities" },
-        { icon: "fa-heart", label: "Child Care", href: "/dashboard/child/child-care" },
-      ],
-    },
-  },
   {
     type: "treeview",
     data: {
@@ -179,32 +146,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
       children: [
         { icon: "fa-bus", label: "Transport", href: "/dashboard/transport" },
         { icon: "fa-user", label: "Member", href: "/dashboard/transport/member" },
-      ],
-    },
-  },
-  {
-    type: "treeview",
-    data: {
-      icon: "fa-bed",
-      label: "Hostel",
-      defaultOpen: false,
-      children: [
-        { icon: "fa-building", label: "Hostel", href: "/dashboard/hostel" },
-        { icon: "fa-list", label: "Category", href: "/dashboard/hostel/category" },
-        { icon: "fa-user", label: "Member", href: "/dashboard/hostel/member" },
-      ],
-    },
-  },
-  {
-    type: "treeview",
-    data: {
-      icon: "fa-handshake-o",
-      label: "Sponsorship",
-      defaultOpen: false,
-      children: [
-        { icon: "fa-user", label: "Candidate", href: "/dashboard/sponsorship/candidate" },
-        { icon: "fa-users", label: "Sponsor", href: "/dashboard/sponsorship/sponsor" },
-        { icon: "fa-money", label: "Sponsorship", href: "/dashboard/sponsorship" },
       ],
     },
   },
@@ -245,7 +186,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
       defaultOpen: false,
       children: [
         { icon: "fa-file-text", label: "Class Report", href: "/dashboard/report/class" },
-        { icon: "fa-file-text", label: "Sponsorship Report", href: "/dashboard/report/sponsorship" },
         { icon: "fa-file-text", label: "Student Report", href: "/dashboard/report/student" },
         { icon: "fa-id-card", label: "ID Card Report", href: "/dashboard/report/id-card" },
         { icon: "fa-file-text", label: "Admit Card Report", href: "/dashboard/report/admit-card" },
@@ -262,9 +202,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
         { icon: "fa-file-text", label: "Mark Sheet Report", href: "/dashboard/report/mark-sheet" },
         { icon: "fa-vcard", label: "Progress Card Report", href: "/dashboard/report/progress-card" },
         { icon: "fa-users", label: "Teacher Gender Report", href: "/dashboard/report/teacher-gender" },
-        { icon: "fa-laptop", label: "Online Exam Report", href: "/dashboard/report/online-exam" },
-        { icon: "fa-question-circle", label: "Online Exam Question Report", href: "/dashboard/report/online-exam-question" },
-        { icon: "fa-check-square-o", label: "Online Exam Question Answers Report", href: "/dashboard/report/online-exam-answers" },
         { icon: "fa-globe", label: "Online Admission Report", href: "/dashboard/report/online-admission" },
         { icon: "fa-certificate", label: "Certificate Report", href: "/dashboard/report/certificate" },
         { icon: "fa-paper-plane", label: "Leave Application Report", href: "/dashboard/report/leave-application" },

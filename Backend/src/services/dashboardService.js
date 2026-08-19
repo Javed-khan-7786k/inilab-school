@@ -88,13 +88,13 @@ class DashboardService {
     if (role === "Admin") {
       const studentCount = await Student.countDocuments({});
       const teacherCount = await Teacher.countDocuments({});
-      const parentCount = await Parent.countDocuments({});
+      const userCount = await User.countDocuments({});
       const visitorCount = await Visitor.countDocuments({});
 
       const infoBoxes = [
         { value: studentCount, label: "Student", icon: "fa-graduation-cap", bgColor: "bg-tealbox" },
         { value: teacherCount, label: "Teacher", icon: "fa-user", bgColor: "bg-orangebox" },
-        { value: parentCount, label: "Parents", icon: "fa-users", bgColor: "bg-pinkbox" },
+        { value: userCount, label: "User", icon: "fa-users", bgColor: "bg-pinkbox" },
         { value: visitorCount, label: "Visitor Log", icon: "fa-user-secret", bgColor: "bg-purplebox" },
       ];
 

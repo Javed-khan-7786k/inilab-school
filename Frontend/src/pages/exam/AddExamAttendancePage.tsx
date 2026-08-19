@@ -1,5 +1,7 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Formik, Form, ErrorMessage as FormikErrorMessage } from "formik";
+import * as Yup from "yup";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { PageHeaderBar } from "../../components/common/PageHeaderBar";
 import { Select } from "../../components/ui/Select";
@@ -8,7 +10,7 @@ import { Icon } from "../../components/ui/Icon";
 import { Spinner } from "../../components/ui/Spinner";
 import { dataService } from "../../services/dataService";
 import { useLanguage } from "../../context/LanguageContext";
-import type { ExamItem, ClassItem, SectionItem, SubjectItem, Student, ExamAttendanceItem } from "../../types";
+import type { ExamItem, ClassItem, SectionItem, SubjectItem } from "../../types";
 
 export const AddExamAttendancePage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,12 +25,12 @@ export const AddExamAttendancePage: React.FC = () => {
   const [sectionsList, setSectionsList] = useState<SectionItem[]>([]);
   const [subjectsList, setSubjectsList] = useState<SubjectItem[]>([]);
 
-  // Filter state
-  const [examName, setExamName] = useState("");
-  const [className, setClassName] = useState("");
-  const [sectionName, setSectionName] = useState("");
-  const [subjectName, setSubjectName] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [filterValues, setFilterValues] = useState({
+    examName: "",
+    className: "",
+    sectionName: "",
+    subjectName: "",
+  });
 
   // Student Attendance Rows State
   const [students, setStudents] = useState<Array<{
@@ -44,6 +46,13 @@ export const AddExamAttendancePage: React.FC = () => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
   };
+
+  const validationSchema = Yup.object({
+    examName: Yup.string().required(t("Exam selection is required")),
+    className: Yup.string().required(t("Class selection is required")),
+    sectionName: Yup.string().optional(),
+    subjectName: Yup.string().required(t("Subject selection is required")),
+  });
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -66,29 +75,15 @@ export const AddExamAttendancePage: React.FC = () => {
     fetchInitialData();
   }, [t]);
 
-  const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setClassName(e.target.value);
-    setSectionName("");
-    setSubjectName("");
-  };
-
-  const handleLoadStudents = async () => {
-    const errs: Record<string, string> = {};
-    if (!examName) errs.examName = t("Exam selection is required");
-    if (!className) errs.className = t("Class selection is required");
-    if (!subjectName) errs.subjectName = t("Subject selection is required");
-
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) return;
-
+  const handleLoadStudents = async (values: typeof filterValues) => {
+    setFilterValues(values);
     setLoading(true);
     try {
-      // 1. Fetch existing attendance records
       const existingAttendance = await dataService.getExamAttendances({
-        examName,
-        className,
-        sectionName: sectionName || undefined,
-        subjectName,
+        examName: values.examName,
+        className: values.className,
+        sectionName: values.sectionName || undefined,
+        subjectName: values.subjectName,
       });
 
       if (existingAttendance && existingAttendance.length > 0) {
@@ -103,16 +98,14 @@ export const AddExamAttendancePage: React.FC = () => {
           }))
         );
       } else {
-        // 2. Fetch students from class/section
         const allStudents = await dataService.getStudents();
         const filtered = allStudents.filter((st) => {
-          const matchClass = st.className?.toLowerCase() === className.toLowerCase();
-          const matchSec = !sectionName || st.sectionName?.toLowerCase() === sectionName.toLowerCase();
+          const matchClass = st.className?.toLowerCase() === values.className.toLowerCase();
+          const matchSec = !values.sectionName || st.sectionName?.toLowerCase() === values.sectionName.toLowerCase();
           return matchClass && matchSec;
         });
 
         if (filtered.length === 0) {
-          // If no student found in filter, load sample students for demo
           setStudents([
             {
               studentName: "John Doe",
@@ -173,10 +166,10 @@ export const AddExamAttendancePage: React.FC = () => {
     setSubmitting(true);
     try {
       const records = students.map((st) => ({
-        examName,
-        className,
-        sectionName,
-        subjectName,
+        examName: filterValues.examName,
+        className: filterValues.className,
+        sectionName: filterValues.sectionName,
+        subjectName: filterValues.subjectName,
         studentId: st.studentId,
         studentName: st.studentName,
         roll: st.roll,
@@ -197,14 +190,6 @@ export const AddExamAttendancePage: React.FC = () => {
     }
   };
 
-  const filteredSections = className
-    ? sectionsList.filter((s) => s.className.toLowerCase() === className.toLowerCase())
-    : sectionsList;
-
-  const filteredSubjects = className
-    ? subjectsList.filter((sub) => sub.className.toLowerCase() === className.toLowerCase())
-    : subjectsList;
-
   return (
     <DashboardLayout>
       <PageHeaderBar
@@ -222,98 +207,125 @@ export const AddExamAttendancePage: React.FC = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Exam */}
-            <div>
-              <label className="block text-[13px] font-semibold text-[#444] mb-1">
-                {t("Exam")} <span className="text-red-500">*</span>
-              </label>
-              <Select
-                value={examName}
-                onChange={(e) => setExamName(e.target.value)}
-                className="w-full"
-              >
-                <option value="">{t("Select Exam")}</option>
-                {examsList.map((ex) => (
-                  <option key={ex.id} value={ex.name}>
-                    {ex.name}
-                  </option>
-                ))}
-              </Select>
-              {errors.examName && (
-                <p className="text-red-500 text-xs mt-1">{errors.examName}</p>
-              )}
-            </div>
+          <Formik
+            initialValues={filterValues}
+            validationSchema={validationSchema}
+            onSubmit={handleLoadStudents}
+          >
+            {({ values, setFieldValue, handleBlur }) => {
+              const filteredSections = values.className
+                ? sectionsList.filter((s) => s.className.toLowerCase() === values.className.toLowerCase())
+                : sectionsList;
 
-            {/* Class */}
-            <div>
-              <label className="block text-[13px] font-semibold text-[#444] mb-1">
-                {t("Class")} <span className="text-red-500">*</span>
-              </label>
-              <Select
-                value={className}
-                onChange={handleClassChange}
-                className="w-full"
-              >
-                <option value="">{t("Select Class")}</option>
-                {classesList.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </Select>
-              {errors.className && (
-                <p className="text-red-500 text-xs mt-1">{errors.className}</p>
-              )}
-            </div>
+              const filteredSubjects = values.className
+                ? subjectsList.filter((sub) => sub.className.toLowerCase() === values.className.toLowerCase())
+                : subjectsList;
 
-            {/* Section */}
-            <div>
-              <label className="block text-[13px] font-semibold text-[#444] mb-1">
-                {t("Section")}
-              </label>
-              <Select
-                value={sectionName}
-                onChange={(e) => setSectionName(e.target.value)}
-                className="w-full"
-              >
-                <option value="">{t("Select Section")}</option>
-                {filteredSections.map((s) => (
-                  <option key={s.id} value={s.name}>
-                    {s.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
+              return (
+                <Form>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Exam */}
+                    <div>
+                      <label className="block text-[13px] font-semibold text-[#444] mb-1">
+                        {t("Exam")} <span className="text-red-500">*</span>
+                      </label>
+                      <Select
+                        name="examName"
+                        value={values.examName}
+                        onChange={(e) => setFieldValue("examName", e.target.value)}
+                        onBlur={handleBlur}
+                        className="w-full"
+                      >
+                        <option value="">{t("Select Exam")}</option>
+                        {examsList.map((ex) => (
+                          <option key={ex.id} value={ex.name}>
+                            {ex.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormikErrorMessage name="examName" component="p" className="text-red-500 text-xs mt-1" />
+                    </div>
 
-            {/* Subject */}
-            <div>
-              <label className="block text-[13px] font-semibold text-[#444] mb-1">
-                {t("Subject")} <span className="text-red-500">*</span>
-              </label>
-              <Select
-                value={subjectName}
-                onChange={(e) => setSubjectName(e.target.value)}
-                className="w-full"
-              >
-                <option value="">{t("Select Subject")}</option>
-                {filteredSubjects.map((sub) => (
-                  <option key={sub.id} value={sub.name}>
-                    {sub.name}
-                  </option>
-                ))}
-              </Select>
-              {errors.subjectName && (
-                <p className="text-red-500 text-xs mt-1">{errors.subjectName}</p>
-              )}
-            </div>
-          </div>
+                    {/* Class */}
+                    <div>
+                      <label className="block text-[13px] font-semibold text-[#444] mb-1">
+                        {t("Class")} <span className="text-red-500">*</span>
+                      </label>
+                      <Select
+                        name="className"
+                        value={values.className}
+                        onChange={(e) => {
+                          setFieldValue("className", e.target.value);
+                          setFieldValue("sectionName", "");
+                          setFieldValue("subjectName", "");
+                        }}
+                        onBlur={handleBlur}
+                        className="w-full"
+                      >
+                        <option value="">{t("Select Class")}</option>
+                        {classesList.map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormikErrorMessage name="className" component="p" className="text-red-500 text-xs mt-1" />
+                    </div>
 
-          <div className="mt-6 flex justify-end">
-            <Button type="button" variant="primary" onClick={handleLoadStudents}>
-              {t("Exam Attendance")}
-            </Button>
-          </div>
+                    {/* Section */}
+                    <div>
+                      <label className="block text-[13px] font-semibold text-[#444] mb-1">
+                        {t("Section")}
+                      </label>
+                      <Select
+                        name="sectionName"
+                        value={values.sectionName}
+                        onChange={(e) => setFieldValue("sectionName", e.target.value)}
+                        onBlur={handleBlur}
+                        className="w-full"
+                      >
+                        <option value="">{t("Select Section")}</option>
+                        {filteredSections.map((s) => (
+                          <option key={s.id} value={s.name}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormikErrorMessage name="sectionName" component="p" className="text-red-500 text-xs mt-1" />
+                    </div>
+
+                    {/* Subject */}
+                    <div>
+                      <label className="block text-[13px] font-semibold text-[#444] mb-1">
+                        {t("Subject")} <span className="text-red-500">*</span>
+                      </label>
+                      <Select
+                        name="subjectName"
+                        value={values.subjectName}
+                        onChange={(e) => setFieldValue("subjectName", e.target.value)}
+                        onBlur={handleBlur}
+                        className="w-full"
+                      >
+                        <option value="">{t("Select Subject")}</option>
+                        {filteredSubjects.map((sub) => (
+                          <option key={sub.id} value={sub.name}>
+                            {sub.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <FormikErrorMessage name="subjectName" component="p" className="text-red-500 text-xs mt-1" />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end">
+                    <Button type="submit" variant="primary">
+                      {t("Exam Attendance")}
+                    </Button>
+                  </div>
+                </Form>
+              );
+            }}
+          </Formik>
         </div>
 
         {/* Student Attendance Entry Table */}
@@ -321,7 +333,7 @@ export const AddExamAttendancePage: React.FC = () => {
           <div className="bg-white rounded-[3px] border border-[#e1e1e1] shadow-sm max-w-4xl mx-auto overflow-hidden">
             <div className="bg-[#fcfcfc] border-b border-[#e1e1e1] px-5 py-4 flex items-center justify-between">
               <h3 className="text-[16px] font-semibold text-[#444] m-0">
-                {t("Attendance List")} ({examName} - {className} - {subjectName})
+                {t("Attendance List")} ({filterValues.examName} - {filterValues.className} - {filterValues.subjectName})
               </h3>
             </div>
 

@@ -1,5 +1,7 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Formik, Form, ErrorMessage as FormikErrorMessage } from "formik";
+import * as Yup from "yup";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { useLanguage } from "../../context/LanguageContext";
 import { PageHeaderBar } from "../../components/common/PageHeaderBar";
@@ -16,28 +18,34 @@ export const AddExamPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(isEditMode);
-  const [submitting, setSubmitting] = useState(false);
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    date: "",
+    note: "",
+  });
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-
-  // Form Fields State
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [note, setNote] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
   };
 
+  const validationSchema = Yup.object({
+    name: Yup.string().required(t("Exam name is required")),
+    date: Yup.string().required(t("Date is required")),
+    note: Yup.string().optional(),
+  });
+
   useEffect(() => {
     const loadInitialData = async () => {
       if (isEditMode && id) {
         try {
           const examData = await dataService.getExamById(id);
-          setName(examData.name || "");
-          setDate(examData.date || "");
-          setNote(examData.note || "");
+          setInitialValues({
+            name: examData.name || "",
+            date: examData.date || "",
+            note: examData.note || "",
+          });
         } catch (err: any) {
           showToast(err.message || t("Failed to load exam data"), "error");
         } finally {
@@ -49,31 +57,13 @@ export const AddExamPage: React.FC = () => {
     loadInitialData();
   }, [id, isEditMode, t]);
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!name.trim()) errs.name = t("Exam name is required");
-    if (!date.trim()) errs.date = t("Date is required");
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    setSubmitting(true);
+  const handleSubmit = async (values: typeof initialValues, { setSubmitting }: any) => {
     try {
-      const payload = {
-        name,
-        date,
-        note,
-      };
-
       if (isEditMode && id) {
-        await dataService.updateExam(id, payload);
+        await dataService.updateExam(id, values);
         showToast(t("Exam updated successfully"), "success");
       } else {
-        await dataService.addExam(payload);
+        await dataService.addExam(values);
         showToast(t("Exam added successfully"), "success");
       }
 
@@ -113,77 +103,93 @@ export const AddExamPage: React.FC = () => {
             </h2>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {/* Exam Name */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <label className="sm:w-1/4 text-[13px] font-semibold text-[#444]">
-                {t("Exam Name")} <span className="text-red-500">*</span>
-              </label>
-              <div className="sm:w-3/4">
-                <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. First Semester"
-                  className="w-full"
-                />
-                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-              </div>
-            </div>
+          <Formik
+            enableReinitialize
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting, values, handleChange, handleBlur }) => (
+              <Form className="p-6 space-y-6">
+                {/* Exam Name */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <label className="sm:w-1/4 text-[13px] font-semibold text-[#444]">
+                    {t("Exam Name")} <span className="text-red-500">*</span>
+                  </label>
+                  <div className="sm:w-3/4">
+                    <Input
+                      type="text"
+                      name="name"
+                      value={values.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="e.g. First Semester"
+                      className="w-full"
+                    />
+                    <FormikErrorMessage name="name" component="p" className="text-red-500 text-xs mt-1" />
+                  </div>
+                </div>
 
-            {/* Date */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <label className="sm:w-1/4 text-[13px] font-semibold text-[#444]">
-                {t("Date")} <span className="text-red-500">*</span>
-              </label>
-              <div className="sm:w-3/4">
-                <Input
-                  type="text"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  placeholder="e.g. 01-01-2025"
-                  className="w-full"
-                />
-                {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
-              </div>
-            </div>
+                {/* Date */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <label className="sm:w-1/4 text-[13px] font-semibold text-[#444]">
+                    {t("Date")} <span className="text-red-500">*</span>
+                  </label>
+                  <div className="sm:w-3/4">
+                    <Input
+                      type="text"
+                      name="date"
+                      value={values.date}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      placeholder="e.g. 01-01-2025"
+                      className="w-full"
+                    />
+                    <FormikErrorMessage name="date" component="p" className="text-red-500 text-xs mt-1" />
+                  </div>
+                </div>
 
-            {/* Note */}
-            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-              <label className="sm:w-1/4 text-[13px] font-semibold text-[#444] sm:pt-2">
-                {t("Note")}
-              </label>
-              <div className="sm:w-3/4">
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  rows={3}
-                  placeholder="e.g. Don't delete it!"
-                  className="w-full rounded-[3px] border border-[#d2d6de] px-3 py-2 text-[13px] focus:border-primary focus:outline-none"
-                />
-              </div>
-            </div>
+                {/* Note */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+                  <label className="sm:w-1/4 text-[13px] font-semibold text-[#444] sm:pt-2">
+                    {t("Note")}
+                  </label>
+                  <div className="sm:w-3/4">
+                    <textarea
+                      name="note"
+                      value={values.note}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      rows={3}
+                      placeholder="e.g. Don't delete it!"
+                      className="w-full rounded-[3px] border border-[#d2d6de] px-3 py-2 text-[13px] focus:border-primary focus:outline-none"
+                    />
+                    <FormikErrorMessage name="note" component="p" className="text-red-500 text-xs mt-1" />
+                  </div>
+                </div>
 
-            {/* Buttons */}
-            <div className="pt-4 border-t border-[#eee] flex items-center justify-end gap-3">
-              <Button type="submit" variant="primary" disabled={submitting}>
-                {submitting ? (
-                  <Spinner size="sm" />
-                ) : isEditMode ? (
-                  t("Update Exam")
-                ) : (
-                  t("Add Exam")
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => navigate("/dashboard/exam")}
-              >
-                {t("Cancel")}
-              </Button>
-            </div>
-          </form>
+                {/* Buttons */}
+                <div className="pt-4 border-t border-[#eee] flex items-center justify-end gap-3">
+                  <Button type="submit" variant="primary" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <Spinner size="sm" />
+                    ) : isEditMode ? (
+                      t("Update Exam")
+                    ) : (
+                      t("Add Exam")
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => navigate("/dashboard/exam")}
+                  >
+                    {t("Cancel")}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
 

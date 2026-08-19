@@ -68,8 +68,6 @@ export const getSidebarMenuItems = (role: string): SidebarEntry[] => {
     case "Parent":
       return [
         { type: "link", data: { icon: "fa-laptop", label: "Dashboard", href: "/dashboard", isActive: true } },
-        { type: "link", data: { icon: "fa-user", label: "My Child", href: "#" } },
-        { type: "link", data: { icon: "fa-user-secret", label: "Child Attendance", href: "#" } },
         { type: "link", data: { icon: "fa-envelope", label: "Message", href: "/dashboard/message" } },
         {
           type: "treeview",

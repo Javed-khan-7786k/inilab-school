@@ -49,7 +49,6 @@ export interface CalendarDay {
 export const sidebarMenuItems: SidebarEntry[] = [
   { type: "link", data: { icon: "fa-laptop", label: "Dashboard", href: "/dashboard", isActive: true } },
   { type: "link", data: { icon: "fa-user", label: "Student", href: "/dashboard/student" } },
-  { type: "link", data: { icon: "fa-user", label: "Parents", href: "/dashboard/parents" } },
   { type: "link", data: { icon: "fa-user", label: "Teacher", href: "/dashboard/teacher" } },
   { type: "link", data: { icon: "fa-user", label: "User", href: "/dashboard/user" } },
   {
@@ -66,7 +65,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
     },
   },
   { type: "link", data: { icon: "fa-envelope", label: "Message", href: "/dashboard/message" } },
-  { type: "link", data: { icon: "fa-camera", label: "Media", href: "/dashboard/media" } },
   { type: "link", data: { icon: "fa-paper-plane", label: "Leave Apply", href: "/dashboard/leave-apply" } },
   {
     type: "treeview",
