@@ -17,7 +17,7 @@ export const ExamAdmitCardPage: React.FC = () => {
   const [examsList, setExamsList] = useState<ExamItem[]>([]);
   const [classesList, setClassesList] = useState<ClassItem[]>([]);
   const [sectionsList, setSectionsList] = useState<SectionItem[]>([]);
-  const [studentsList, setStudentsList] = useState<StudentListItem[]>([]);
+  const [studentsList, setStudentsList] = useState<any[]>([]);
   const [schedulesList, setSchedulesList] = useState<ExamScheduleItem[]>([]);
 
   // Selection state
@@ -28,7 +28,7 @@ export const ExamAdmitCardPage: React.FC = () => {
 
   // Generated state
   const [generatedCards, setGeneratedCards] = useState<Array<{
-    student: StudentListItem;
+    student: any;
     examName: string;
     className: string;
     sectionName: string;
@@ -68,9 +68,11 @@ export const ExamAdmitCardPage: React.FC = () => {
     ? sectionsList.filter((s) => s.className.toLowerCase() === selectedClass.toLowerCase())
     : sectionsList;
 
-  const filteredStudents = studentsList.filter((st) => {
-    const matchClass = !selectedClass || (st.className && st.className.toLowerCase() === selectedClass.toLowerCase());
-    const matchSec = !selectedSection || (st.sectionName && st.sectionName.toLowerCase() === selectedSection.toLowerCase());
+  const filteredStudents = studentsList.filter((st: any) => {
+    const stClass = st.className || st.class || "";
+    const stSec = st.sectionName || st.section || "";
+    const matchClass = !selectedClass || (stClass && stClass.toLowerCase() === selectedClass.toLowerCase());
+    const matchSec = !selectedSection || (stSec && stSec.toLowerCase() === selectedSection.toLowerCase());
     return matchClass && matchSec;
   });
 
@@ -90,7 +92,7 @@ export const ExamAdmitCardPage: React.FC = () => {
     // Target students
     let targets = filteredStudents;
     if (selectedStudentId) {
-      targets = targets.filter((st) => String(st.id) === String(selectedStudentId));
+      targets = targets.filter((st: any) => String(st.id) === String(selectedStudentId));
     }
 
     // Schedules for selected exam & class
@@ -101,11 +103,11 @@ export const ExamAdmitCardPage: React.FC = () => {
       return matchEx && matchCl && matchSec;
     });
 
-    const cards = targets.map((st) => ({
+    const cards = targets.map((st: any) => ({
       student: st,
       examName: selectedExam,
-      className: st.className || selectedClass,
-      sectionName: st.sectionName || selectedSection || "A",
+      className: st.className || st.class || selectedClass,
+      sectionName: st.sectionName || st.section || selectedSection || "A",
       schedules: examSchedules,
     }));
 

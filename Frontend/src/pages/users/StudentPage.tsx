@@ -126,7 +126,7 @@ export const StudentPage: React.FC = () => {
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       String(item.roll).includes(searchTerm) ||
       item.email.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesClass && matchesSearch;
+    return Boolean(matchesClass && matchesSearch);
   };
 
   if (loading && (!students || students.length === 0)) {

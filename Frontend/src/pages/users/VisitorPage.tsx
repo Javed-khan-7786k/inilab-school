@@ -49,25 +49,19 @@ export const VisitorPage: React.FC = () => {
   }, []);
 
   const [formName, setFormName] = useState('');
-  const [formToMeet, setFormToMeet] = useState('');
+  const [formToMeet, setFormToMeet] = useState('Lewis Rowley');
+  const [formStatus, setFormStatus] = useState<'in' | 'out'>('in');
 
-  const handleAddVisitor = async () => {
+  const handleAddVisitor = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!formName.trim()) {
       alert(t("Name is required"));
       return;
     }
     try {
-      const newV = await dataService.addVisitor({
-        name: formName,
-        toMeet: formToMeet || 'Management',
-        checkIn: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        checkOut: '-',
-        date: new Date().toLocaleDateString(),
-        status: 'In',
-      });
+      const newV = await dataService.addVisitor(formName, formToMeet, formStatus);
       setVisitors([newV, ...visitors]);
       setFormName('');
-      setFormToMeet('');
       setActiveTab('list');
     } catch (err: any) {
       alert("Error adding visitor: " + (err.message || err));
@@ -87,10 +81,7 @@ export const VisitorPage: React.FC = () => {
 
   const handleCheckoutVisitor = async (id: string | number) => {
     try {
-      const updated = await dataService.updateVisitor(id, {
-        checkOut: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: 'Out',
-      });
+      const updated = await dataService.checkoutVisitor(id);
       setVisitors(visitors.map((v) => (v.id === id ? updated : v)));
       alert("Visitor checked out successfully!");
     } catch (err: any) {
@@ -323,16 +314,16 @@ export const VisitorPage: React.FC = () => {
               <form onSubmit={handleAddVisitor} className="space-y-4">
                 <Input
                   label={t("Name")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
                   placeholder="Enter name..."
                   requiredField
                 />
 
                 <Select
                   label={t("To meet")}
-                  value={toMeet}
-                  onChange={(e) => setToMeet(e.target.value)}
+                  value={formToMeet}
+                  onChange={(e) => setFormToMeet(e.target.value)}
                   options={[
                     { value: "Lewis Rowley", label: "Lewis Rowley" },
                     { value: "Sarah Connor", label: "Sarah Connor" },
@@ -342,8 +333,8 @@ export const VisitorPage: React.FC = () => {
 
                 <Select
                   label={t("Status")}
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as 'in' | 'out')}
+                  value={formStatus}
+                  onChange={(e) => setFormStatus(e.target.value as 'in' | 'out')}
                   options={[
                     { value: "in", label: "In" },
                     { value: "out", label: "Out" }
