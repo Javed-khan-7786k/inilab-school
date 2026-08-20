@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import apiClient from '../../services/api/apiClient';
+import { dataService } from '../../services/dataService';
+import type { ClassItem } from '../../types';
 import { DashboardLayout } from '../layout/DashboardLayout';
 import { useLanguage } from '../../context/LanguageContext';
 import { Icon } from '../ui/Icon';
@@ -31,6 +33,7 @@ interface GenericTablePageProps<T extends { id: string | number }> {
   initialData: T[];
   filterFn: (item: T, searchTerm: string, selectedClass: string) => boolean;
   showClassFilter?: boolean;
+  classList?: (string | ClassItem)[];
   importEntity?: string; // e.g. "students", "teachers", "users" — enables Import button
   onImportSuccess?: () => void; // callback to refresh data after import
   onAddClick?: () => void; // callback for + Add button
@@ -43,6 +46,7 @@ export function GenericTablePage<T extends { id: string | number }>({
   initialData,
   filterFn,
   showClassFilter = false,
+  classList,
   importEntity,
   onImportSuccess,
   onAddClick,
@@ -111,6 +115,66 @@ export function GenericTablePage<T extends { id: string | number }>({
       setTimeout(() => setImportResult(null), 5000);
     }
   };
+
+  // ─── Dynamic Classes filter state ──────────────────────────────
+  const [availableClasses, setAvailableClasses] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!showClassFilter) return;
+
+    let isMounted = true;
+    const loadClasses = async () => {
+      const classSet = new Set<string>();
+
+      // 1. Add from passed prop if any
+      if (classList && Array.isArray(classList)) {
+        classList.forEach((c) => {
+          if (typeof c === 'string' && c.trim()) classSet.add(c.trim());
+          else if (c && typeof c === 'object' && c.name) classSet.add(c.name.trim());
+        });
+      }
+
+      // 2. Fetch from backend API
+      try {
+        const fetched = await dataService.getClasses();
+        if (Array.isArray(fetched)) {
+          fetched.forEach((c) => {
+            if (c.name) classSet.add(c.name.trim());
+          });
+        }
+      } catch (err) {
+        console.warn('Failed to fetch classes for filter:', err);
+      }
+
+      // 3. Extract from initialData
+      if (Array.isArray(initialData)) {
+        initialData.forEach((item: any) => {
+          if (item?.className && typeof item.className === 'string' && item.className.trim()) {
+            classSet.add(item.className.trim());
+          } else if (item?.class && typeof item.class === 'string' && item.class.trim()) {
+            classSet.add(item.class.trim());
+          }
+        });
+      }
+
+      if (isMounted) {
+        const sorted = Array.from(classSet).sort((a, b) => {
+          const numA = parseInt(a.replace(/\D/g, ''), 10);
+          const numB = parseInt(b.replace(/\D/g, ''), 10);
+          if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+          return a.localeCompare(b);
+        });
+        setAvailableClasses(sorted);
+      }
+    };
+
+    loadClasses();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [showClassFilter, classList, initialData]);
+
   const {
     searchTerm,
     setSearchTerm,
@@ -215,7 +279,7 @@ export function GenericTablePage<T extends { id: string | number }>({
     }
   };
 
- const renderSortIcon = (key: keyof T | "status" | "action") => {
+  const renderSortIcon = (key: keyof T | "status" | "action") => {
     if (key === 'action') return null;
     return (
       <span className="text-[10px] text-gray-400 ml-1.5 inline-block">
@@ -255,12 +319,14 @@ export function GenericTablePage<T extends { id: string | number }>({
                 <select
                   value={selectedClass}
                   onChange={(e) => setSelectedClass(e.target.value)}
-                  className="border border-[#1ab394] rounded px-3 py-1.5 text-dark bg-white focus:outline-none focus:ring-1 focus:ring-[#1ab394] text-[13px] min-w-[170px] shadow-sm"
+                  className="border border-[#1ab394] rounded px-3 py-1.5 text-dark bg-white focus:outline-none focus:ring-1 focus:ring-[#1ab394] text-[13px] min-w-[170px] shadow-sm cursor-pointer"
                 >
                   <option value="">{t("Select Class")}</option>
-                  <option value="Class 1">Class 1</option>
-                  <option value="Class 2">Class 2</option>
-                  <option value="Class 3">Class 3</option>
+                  {availableClasses.map((clsName) => (
+                    <option key={clsName} value={clsName}>
+                      {clsName}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}

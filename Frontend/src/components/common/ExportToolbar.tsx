@@ -1,10 +1,20 @@
 import React from "react";
 import { useLanguage } from "../../context/LanguageContext";
+import {
+  type ExportColumn,
+  handleCopyToClipboard,
+  handleExportCsv,
+  exportExcelWithImages,
+  exportPdfWithImages,
+} from "../../Utils/exportService";
 
 export interface ExportToolbarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onExport?: (type: "copy" | "excel" | "csv" | "pdf") => void;
+  data?: any[];
+  columns?: ExportColumn[];
+  filename?: string;
   placeholder?: string;
   className?: string;
 }
@@ -13,17 +23,36 @@ export const ExportToolbar: React.FC<ExportToolbarProps> = ({
   searchTerm,
   onSearchChange,
   onExport,
+  data = [],
+  columns = [],
+  filename = "export",
   placeholder,
   className = "",
 }) => {
   const { t } = useLanguage();
 
-  const handleExport = (type: "copy" | "excel" | "csv" | "pdf") => {
+  const handleExport = async (type: "copy" | "excel" | "csv" | "pdf") => {
     if (onExport) {
       onExport(type);
-    } else {
-      if (type === "copy") alert(t("Copied to clipboard"));
-      else alert(t(`Exporting ${type.toUpperCase()}...`));
+      return;
+    }
+
+    if (type === "copy") {
+      handleCopyToClipboard(data, columns);
+    } else if (type === "csv") {
+      handleExportCsv(data, columns, filename);
+    } else if (type === "excel") {
+      try {
+        await exportExcelWithImages(data, columns, filename);
+      } catch {
+        handleExportCsv(data, columns, filename);
+      }
+    } else if (type === "pdf") {
+      try {
+        await exportPdfWithImages(data, columns, filename);
+      } catch {
+        handleExportCsv(data, columns, filename);
+      }
     }
   };
 

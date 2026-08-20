@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { PageHeaderBar } from "../../components/common/PageHeaderBar";
@@ -9,6 +9,14 @@ import { Spinner } from "../../components/ui/Spinner";
 import { dataService } from "../../services/dataService";
 import { useLanguage } from "../../context/LanguageContext";
 import type { ExamItem, ClassItem, SectionItem, SubjectItem, ExamAttendanceItem } from "../../types";
+
+import {
+  type ExportColumn,
+  handleCopyToClipboard,
+  handleExportCsv,
+  exportExcelWithImages,
+  exportPdfWithImages,
+} from "../../Utils/exportService";
 
 export function ExamExamAttendancePage() {
   const navigate = useNavigate();
@@ -96,6 +104,45 @@ export function ExamExamAttendancePage() {
       item.status.toLowerCase().includes(term)
     );
   });
+
+  const exportColumns: ExportColumn[] = [
+    { header: "Roll Number", accessorKey: "roll" },
+    { header: "Student Name", accessorKey: "studentName" },
+    { header: "Email Address", accessorKey: "email" },
+    { header: "Exam Name", accessorKey: "examName" },
+    { header: "Class", accessorKey: "className" },
+    { header: "Section", accessorKey: "sectionName" },
+    { header: "Subject", accessorKey: "subjectName" },
+    { header: "Status", accessorKey: "status" },
+  ];
+
+  const handleCopy = () => {
+    handleCopyToClipboard(filteredAttendances, exportColumns);
+  };
+
+  const handleExport = async (format: "csv" | "excel" | "pdf") => {
+    const filename = `Exam_Attendance_${selectedExam || "All"}_${selectedClass || "All"}`;
+    if (format === "csv") {
+      handleExportCsv(filteredAttendances, exportColumns, filename);
+    } else if (format === "excel") {
+      try {
+        await exportExcelWithImages(filteredAttendances, exportColumns, filename, {
+          templateUrl: "/template.xlsx",
+          imageColumnKey: "photo",
+        });
+      } catch {
+        handleExportCsv(filteredAttendances, exportColumns, filename);
+      }
+    } else if (format === "pdf") {
+      try {
+        await exportPdfWithImages(filteredAttendances, exportColumns, filename, {
+          imageColumnKey: "photo",
+        });
+      } catch {
+        handleExportCsv(filteredAttendances, exportColumns, filename);
+      }
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -220,29 +267,29 @@ export function ExamExamAttendancePage() {
               <div className="flex items-center border border-[#d2d6de] rounded overflow-hidden text-xs">
                 <button
                   type="button"
-                  onClick={() => alert(t("Copied to clipboard"))}
-                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors"
+                  onClick={handleCopy}
+                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors cursor-pointer"
                 >
                   Copy
                 </button>
                 <button
                   type="button"
-                  onClick={() => alert(t("Exporting Excel..."))}
-                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors"
+                  onClick={() => handleExport("excel")}
+                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors cursor-pointer"
                 >
                   Excel
                 </button>
                 <button
                   type="button"
-                  onClick={() => alert(t("Exporting CSV..."))}
-                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors"
+                  onClick={() => handleExport("csv")}
+                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] border-r border-[#d2d6de] text-[#444] font-medium transition-colors cursor-pointer"
                 >
                   CSV
                 </button>
                 <button
                   type="button"
-                  onClick={() => alert(t("Exporting PDF..."))}
-                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] text-[#444] font-medium transition-colors"
+                  onClick={() => handleExport("pdf")}
+                  className="px-2.5 py-1.5 bg-[#f4f4f4] hover:bg-[#e7e7e7] text-[#444] font-medium transition-colors cursor-pointer"
                 >
                   PDF
                 </button>

@@ -4,10 +4,15 @@ import * as Lucide from "lucide-react";
 const iconMap: Record<string, React.ComponentType<Lucide.LucideProps>> = {
   "fa-laptop": Lucide.LayoutDashboard,
   "fa-user": Lucide.User,
-  "fa-pencil":Lucide.Pencil,
-  "fa-trash":Lucide.Trash2,
-  "fa-book": Lucide.BookOpen,
+  "fa-User": Lucide.User,
+  "fa-users": Lucide.Users,
   "fa-user-secret": Lucide.UserCheck,
+  "fa-user-plus": Lucide.UserPlus,
+  "fa-user-circle": Lucide.CircleUser,
+  "fa-pencil": Lucide.Pencil,
+  "fa-pencil-square-o": Lucide.SquarePen,
+  "fa-trash": Lucide.Trash2,
+  "fa-book": Lucide.BookOpen,
   "fa-envelope": Lucide.Mail,
   "fa-camera": Lucide.Camera,
   "fa-paper-plane": Lucide.Send,
@@ -16,28 +21,60 @@ const iconMap: Record<string, React.ComponentType<Lucide.LucideProps>> = {
   "fa-bullhorn": Lucide.Megaphone,
   "fa-calendar": Lucide.Calendar,
   "fa-calendar-check-o": Lucide.CalendarCheck,
+  "fa-calendar-check": Lucide.CalendarCheck,
+  "fa-clock-o": Lucide.Clock,
   "fa-flag": Lucide.Flag,
   "fa-file-text": Lucide.FileText,
+  "fa-files-o": Lucide.Files,
+  "fa-file-pdf-o": Lucide.FileCode,
   "fa-id-card": Lucide.Contact,
-  "fa-user-plus": Lucide.UserPlus,
+  "fa-id-card-o": Lucide.Contact,
   "fa-plus": Lucide.Plus,
   "fa-graduation-cap": Lucide.GraduationCap,
   "fa-globe": Lucide.Globe,
   "fa-bell": Lucide.Bell,
   "fa-phone": Lucide.Phone,
   "fa-lock": Lucide.Lock,
-  "fa-User": Lucide.SquareUser,
+  "fa-key": Lucide.Key,
   "fa-power-off": Lucide.LogOut,
   "fa-caret-down": Lucide.ChevronDown,
-  "fa-bars": Lucide.Menu,
-  "fa-hand-o-right": Lucide.ChevronRight,
-  "fa-bed": Lucide.Bed,
-  "fa-umbrella": Lucide.Umbrella,
   "fa-angle-down": Lucide.ChevronDown,
   "fa-chevron-left": Lucide.ChevronLeft,
   "fa-chevron-right": Lucide.ChevronRight,
+  "fa-bars": Lucide.Menu,
+  "fa-hand-o-right": Lucide.ChevronRight,
+  "fa-handshake-o": Lucide.Handshake,
+  "fa-bed": Lucide.Bed,
+  "fa-umbrella": Lucide.Umbrella,
   "fa-check-square-o": Lucide.CheckSquare,
   "fa-check": Lucide.Check,
+  "fa-check-circle": Lucide.CheckCircle2,
+  "fa-exclamation-circle": Lucide.AlertCircle,
+  "fa-info-circle": Lucide.Info,
+  "fa-upload": Lucide.Upload,
+  "fa-times": Lucide.X,
+  "fa-bus": Lucide.Bus,
+  "fa-heart": Lucide.Heart,
+  "fa-save": Lucide.Save,
+  "fa-paint-brush": Lucide.Paintbrush,
+  "fa-adjust": Lucide.Sliders,
+  "fa-sun-o": Lucide.Sun,
+  "fa-moon-o": Lucide.Moon,
+  "fa-columns": Lucide.Columns2,
+  "fa-star": Lucide.Star,
+  "fa-cogs": Lucide.Settings,
+  "fa-cog": Lucide.Settings,
+  "fa-print": Lucide.Printer,
+  "fa-search": Lucide.Search,
+  "fa-download": Lucide.Download,
+  "fa-eye": Lucide.Eye,
+  "fa-eye-slash": Lucide.EyeOff,
+  "fa-building": Lucide.Building,
+  "fa-dollar": Lucide.DollarSign,
+  "fa-money": Lucide.Banknote,
+  "fa-shield": Lucide.Shield,
+  "fa-question-circle": Lucide.HelpCircle,
+  "fa-list": Lucide.List,
 };
 
 interface IconProps {
@@ -45,11 +82,28 @@ interface IconProps {
   className?: string;
 }
 
+function toPascalCase(str: string): string {
+  return str
+    .replace(/^fa-/, "")
+    .replace(/^lucide-/, "")
+    .replace(/-o$/, "")
+    .split(/[-_\s]+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
+}
+
 export function Icon({ name, className = "" }: IconProps) {
   // Normalize the icon class name (remove extra spaces and fa prefix if needed)
-  const normalizedKey = name.trim().split(" ").find((part) => part.startsWith("fa-")) || name.trim();
+  const trimmed = name.trim();
+  const normalizedKey = trimmed.split(" ").find((part) => part.startsWith("fa-")) || trimmed;
 
-  const LucideComponent = iconMap[normalizedKey] || Lucide.HelpCircle;
+  const pascalName = toPascalCase(normalizedKey);
+
+  const LucideComponent =
+    iconMap[normalizedKey] ||
+    iconMap[normalizedKey.toLowerCase()] ||
+    (Lucide as Record<string, any>)[pascalName] ||
+    Lucide.HelpCircle;
 
   // Extract size from tailwind class if possible to keep layout matching
   let size = 16; // default size

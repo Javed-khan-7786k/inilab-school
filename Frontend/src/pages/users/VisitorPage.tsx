@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
 import React, { useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { useLanguage } from '../../context/LanguageContext';
@@ -15,6 +15,14 @@ import type { Visitor } from '../../types';
 import { Spinner } from '../../components/ui/Spinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 
+import {
+  type ExportColumn,
+  handleCopyToClipboard,
+  handleExportCsv,
+  exportExcelWithImages,
+  exportPdfWithImages,
+} from '../../Utils/exportService';
+
 export const VisitorPage: React.FC = () => {
   const { t } = useLanguage();
   const visitorModal = useModal<Visitor>();
@@ -23,11 +31,6 @@ export const VisitorPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Add Form States
-  const [name, setName] = useState<string>('');
-  const [toMeet, setToMeet] = useState<string>('Lewis Rowley');
-  const [status, setStatus] = useState<'in' | 'out'>('in');
-
   const fetchVisitors = async () => {
     setLoading(true);
     setError(null);
@@ -35,7 +38,7 @@ export const VisitorPage: React.FC = () => {
       const data = await dataService.getVisitors();
       setVisitors(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load visitors");
+      setError(err.message || 'Failed to load visitors');
     } finally {
       setLoading(false);
     }
@@ -45,46 +48,87 @@ export const VisitorPage: React.FC = () => {
     fetchVisitors();
   }, []);
 
-  const handleAddVisitor = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) {
+  const [formName, setFormName] = useState('');
+  const [formToMeet, setFormToMeet] = useState('');
+
+  const handleAddVisitor = async () => {
+    if (!formName.trim()) {
       alert(t("Name is required"));
       return;
     }
-
     try {
-      await dataService.addVisitor(name, toMeet, status);
-      await fetchVisitors(); // Refresh list from server
-      setName('');
+      const newV = await dataService.addVisitor({
+        name: formName,
+        toMeet: formToMeet || 'Management',
+        checkIn: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        checkOut: '-',
+        date: new Date().toLocaleDateString(),
+        status: 'In',
+      });
+      setVisitors([newV, ...visitors]);
+      setFormName('');
+      setFormToMeet('');
       setActiveTab('list');
     } catch (err: any) {
       alert("Error adding visitor: " + (err.message || err));
     }
   };
 
-  const handleDelete = async (id: string | number) => {
+  const handleDeleteVisitor = async (id: string | number) => {
     if (window.confirm("Are you sure you want to delete this visitor record?")) {
       try {
         await dataService.deleteVisitor(id);
-        await fetchVisitors(); // Refresh list from server
+        setVisitors(visitors.filter((v) => v.id !== id));
       } catch (err: any) {
         alert("Error deleting visitor: " + (err.message || err));
       }
     }
   };
 
-  const handleCheckout = async (id: string | number) => {
+  const handleCheckoutVisitor = async (id: string | number) => {
     try {
-      await dataService.checkoutVisitor(id);
-      await fetchVisitors(); // Refresh list from server
+      const updated = await dataService.updateVisitor(id, {
+        checkOut: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: 'Out',
+      });
+      setVisitors(visitors.map((v) => (v.id === id ? updated : v)));
       alert("Visitor checked out successfully!");
     } catch (err: any) {
       alert("Error checking out visitor: " + (err.message || err));
     }
   };
 
-  const handleCopy = () => alert(t("Copy") + ": Success!");
-  const handleExport = (format: string) => alert("Export to " + format.toUpperCase() + ": Success!");
+  const exportColumns: ExportColumn[] = [
+    { header: "Name", accessorKey: "name" },
+    { header: "To Meet", accessorKey: "toMeet" },
+    { header: "Check In", accessorKey: "checkIn" },
+    { header: "Check Out", accessorKey: "checkOut" },
+    { header: "Date", accessorKey: "date" },
+    { header: "Status", accessorKey: "status" },
+  ];
+
+  const handleCopy = () => {
+    handleCopyToClipboard(visitors, exportColumns);
+  };
+
+  const handleExport = async (format: "csv" | "excel" | "pdf") => {
+    const filename = "visitor-list";
+    if (format === "csv") {
+      handleExportCsv(visitors, exportColumns, filename);
+    } else if (format === "excel") {
+      try {
+        await exportExcelWithImages(visitors, exportColumns, filename);
+      } catch {
+        handleExportCsv(visitors, exportColumns, filename);
+      }
+    } else if (format === "pdf") {
+      try {
+        await exportPdfWithImages(visitors, exportColumns, filename);
+      } catch {
+        handleExportCsv(visitors, exportColumns, filename);
+      }
+    }
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -209,7 +253,7 @@ export const VisitorPage: React.FC = () => {
                             <Button
                               variant={v.status === 'in' ? 'success' : 'secondary'}
                               size="sm"
-                              onClick={() => v.status === 'in' && handleCheckout(v.id)}
+                              onClick={() => v.status === 'in' && handleCheckoutVisitor(v.id)}
                               className={`px-2.5 py-0.5 rounded text-white text-[11px] font-semibold uppercase tracking-wider border-0 cursor-pointer ${
                                 v.status === 'in' ? 'hover:opacity-90' : 'opacity-60 cursor-default shadow-none bg-muted active:scale-100 hover:bg-muted'
                               }`}
@@ -229,7 +273,7 @@ export const VisitorPage: React.FC = () => {
                             <Button
                               variant="danger"
                               size="sm"
-                              onClick={() => handleDelete(v.id)}
+                              onClick={() => handleDeleteVisitor(v.id)}
                               className="rounded-[3px] px-[8px] py-[5px] text-[13px]"
                             >
                               <Icon name="fa-trash" />

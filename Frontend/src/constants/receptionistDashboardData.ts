@@ -60,7 +60,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
       children: [
         { icon: "fa-user", label: "Student Attendance", href: "/dashboard/attendance/student" },
         { icon: "fa-user", label: "Teacher Attendance", href: "/dashboard/attendance/teacher" },
-        { icon: "fa-user", label: "User Attendance", href: "/dashboard/attendance/user" },
       ],
     },
   },

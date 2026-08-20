@@ -52,7 +52,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
   { type: "link", data: { icon: "fa-laptop", label: "Dashboard", href: "/dashboard", isActive: true } },
   { type: "link", data: { icon: "fa-user", label: "Teacher", href: "/dashboard/teacher" } },
   { type: "link", data: { icon: "fa-book", label: "Subject", href: "#" } },
-  { type: "link", data: { icon: "fa-user-secret", label: "User Attendance", href: "/dashboard/attendance/user" } },
   { type: "link", data: { icon: "fa-envelope", label: "Message", href: "/dashboard/message" } },
   { type: "link", data: { icon: "fa-paper-plane", label: "Leave Apply", href: "/dashboard/leave-apply" } },
   {

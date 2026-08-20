@@ -24,7 +24,6 @@ export const getSidebarMenuItems = (role: string): SidebarEntry[] => {
             defaultOpen: false,
             children: [
               { icon: "fa-user", label: "Student Attendance", href: "/dashboard/attendance/student" },
-              { icon: "fa-user", label: "Staff Attendance", href: "/dashboard/attendance/user" },
             ],
           },
         },

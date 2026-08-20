@@ -43,6 +43,7 @@ import {
   AddGradePage,
   ExamExamAttendancePage,
   AddExamAttendancePage,
+  ExamAdmitCardPage,
   MarkMarkPage,
   AddMarkPage,
   MarkMarkDistributionPage,
@@ -594,6 +595,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <AddExamAttendancePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/exam/admit-card"
+            element={
+              <ProtectedRoute>
+                <ExamAdmitCardPage />
               </ProtectedRoute>
             }
           />

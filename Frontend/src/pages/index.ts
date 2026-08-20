@@ -26,6 +26,7 @@ export * from "./exam/ExamGradePage";
 export * from "./exam/AddGradePage";
 export * from "./exam/ExamExamAttendancePage";
 export * from "./exam/AddExamAttendancePage";
+export * from "./exam/ExamAdmitCardPage";
 
 // 3. Mark Module
 export * from "./mark/MarkMarkPage";

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GenericTablePage } from '../../components/common/GenericTablePage';
 import type { Column } from '../../components/common/GenericTablePage';
@@ -116,7 +116,11 @@ export const StudentPage: React.FC = () => {
   ];
 
   const filterFn = (item: StudentListItem, searchTerm: string, selectedClass: string) => {
-    const matchesClass = selectedClass === '' || item.className === selectedClass;
+    const matchesClass =
+      !selectedClass ||
+      selectedClass === '' ||
+      selectedClass === 'Select Class' ||
+      (item.className && item.className.toLowerCase() === selectedClass.toLowerCase());
     const matchesSearch =
       searchTerm === '' ||
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

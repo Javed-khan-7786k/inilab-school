@@ -29,7 +29,6 @@ export const sidebarMenuItems: SidebarEntry[] = [
       children: [
         { icon: "fa-user", label: "Student Attendance", href: "/dashboard/attendance/student" },
         { icon: "fa-user", label: "Teacher Attendance", href: "/dashboard/attendance/teacher" },
-        { icon: "fa-users", label: "User Attendance", href: "/dashboard/attendance/user" },
       ],
     },
   },
@@ -44,6 +43,7 @@ export const sidebarMenuItems: SidebarEntry[] = [
         { icon: "fa-calendar", label: "Exam Schedule", href: "/dashboard/exam/schedule" },
         { icon: "fa-star", label: "Grade", href: "/dashboard/exam/grade" },
         { icon: "fa-check-square-o", label: "Exam Attendance", href: "/dashboard/exam/attendance" },
+        { icon: "fa-id-card-o", label: "Admit Card", href: "/dashboard/exam/admit-card" },
       ],
     },
   },

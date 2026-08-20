@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
@@ -10,6 +10,7 @@ import { Spinner } from "../../components/ui/Spinner";
 import { ErrorMessage } from "../../components/ui/ErrorMessage";
 import { studentApi } from "../../services/api/studentApi";
 import { attendanceApi } from "../../services/api/attendanceApi";
+import { dataService } from "../../services/dataService";
 import type { Student } from "../../types";
 import { getPhotoUrl, handleImageError } from "../../Utils/image";
 import {
@@ -25,6 +26,7 @@ export const StudentAttendancePage: React.FC = () => {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState<Student[]>([]);
+  const [classesList, setClassesList] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,9 +51,27 @@ export const StudentAttendancePage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // 1. Fetch Students from DB
-      const studentList = await studentApi.getAll();
+      // 1. Fetch Students & Classes from DB
+      const [studentList, dbClasses] = await Promise.all([
+        studentApi.getAll(),
+        dataService.getClasses().catch(() => []),
+      ]);
       setStudents(studentList);
+
+      const classSet = new Set<string>();
+      if (Array.isArray(dbClasses)) {
+        dbClasses.forEach((c) => { if (c.name) classSet.add(c.name.trim()); });
+      }
+      if (Array.isArray(studentList)) {
+        studentList.forEach((st: any) => { if (st.className) classSet.add(st.className.trim()); });
+      }
+      const sortedClasses = Array.from(classSet).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, ''), 10);
+        const numB = parseInt(b.replace(/\D/g, ''), 10);
+        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+        return a.localeCompare(b);
+      });
+      setClassesList(sortedClasses);
 
       // 2. Fetch existing Attendance records from DB for the selected date
       const attendanceList = await attendanceApi.getByDate(date);
@@ -183,14 +203,14 @@ export const StudentAttendancePage: React.FC = () => {
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm font-medium text-dark focus:outline-none focus:ring-1 focus:ring-accent"
+              className="px-3 py-2 bg-white border border-[#cbd5e1] rounded text-sm font-medium text-dark focus:outline-none focus:ring-1 focus:ring-accent cursor-pointer"
             >
               <option value="">{t("All Classes")}</option>
-              <option value="Class 1">Class 1</option>
-              <option value="Class 2">Class 2</option>
-              <option value="Class 3">Class 3</option>
-              <option value="Class 4">Class 4</option>
-              <option value="Class 5">Class 5</option>
+              {classesList.map((clsName) => (
+                <option key={clsName} value={clsName}>
+                  {clsName}
+                </option>
+              ))}
             </select>
 
             {/* Quick Action: Mark All Present / Absent */}

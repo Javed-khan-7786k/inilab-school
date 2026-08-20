@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { useLanguage } from "../../context/LanguageContext";
@@ -38,6 +38,7 @@ export const EnquiryListPage: React.FC = () => {
   // Filters State
   const [classFilter, setClassFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [classList, setClassList] = useState<string[]>([]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -48,9 +49,27 @@ export const EnquiryListPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await dataService.getEnquiries();
+      const [data, dbClasses] = await Promise.all([
+        dataService.getEnquiries(),
+        dataService.getClasses().catch(() => []),
+      ]);
       // Current Enquiry list = only NOT-yet-admitted records
       setEnquiries(data.filter((e) => e.status !== "Admission Confirmed"));
+
+      const classSet = new Set<string>();
+      if (Array.isArray(dbClasses)) {
+        dbClasses.forEach((c) => { if (c.name) classSet.add(c.name.trim()); });
+      }
+      if (Array.isArray(data)) {
+        data.forEach((e) => { if (e.applyingClass) classSet.add(e.applyingClass.trim()); });
+      }
+      const sortedClasses = Array.from(classSet).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, ''), 10);
+        const numB = parseInt(b.replace(/\D/g, ''), 10);
+        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+        return a.localeCompare(b);
+      });
+      setClassList(sortedClasses);
     } catch (err: any) {
       setError(err.message || "Failed to load enquiries");
     } finally {
@@ -340,7 +359,7 @@ export const EnquiryListPage: React.FC = () => {
                 className="border border-[#dfe6e9] rounded px-3 py-2 text-dark bg-white focus:outline-none focus:ring-1 focus:ring-accent text-[13px] min-w-[140px] shadow-sm cursor-pointer"
               >
                 <option value="">{t("Filter Class")}</option>
-                {["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10"].map((c) => (
+                {classList.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>

@@ -1,5 +1,6 @@
-import ExamAttendanceModel from "../models/ExamAttendanceModel.js";
-import ApiError from "../utils/ApiError.js";
+function escapeRegex(text) {
+  return text ? text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") : "";
+}
 
 class ExamAttendanceService {
   async getAll(query = {}) {
@@ -7,24 +8,25 @@ class ExamAttendanceService {
     const filter = {};
 
     if (examName) {
-      filter.examName = { $regex: new RegExp(`^${examName}$`, "i") };
+      filter.examName = { $regex: new RegExp(`^${escapeRegex(examName)}$`, "i") };
     }
     if (className) {
-      filter.className = { $regex: new RegExp(`^${className}$`, "i") };
+      filter.className = { $regex: new RegExp(`^${escapeRegex(className)}$`, "i") };
     }
     if (sectionName) {
-      filter.sectionName = { $regex: new RegExp(`^${sectionName}$`, "i") };
+      filter.sectionName = { $regex: new RegExp(`^${escapeRegex(sectionName)}$`, "i") };
     }
     if (subjectName) {
-      filter.subjectName = { $regex: new RegExp(`^${subjectName}$`, "i") };
+      filter.subjectName = { $regex: new RegExp(`^${escapeRegex(subjectName)}$`, "i") };
     }
 
     if (search) {
+      const safeSearch = escapeRegex(search);
       filter.$or = [
-        { studentName: { $regex: search, $options: "i" } },
-        { roll: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { status: { $regex: search, $options: "i" } },
+        { studentName: { $regex: safeSearch, $options: "i" } },
+        { roll: { $regex: safeSearch, $options: "i" } },
+        { email: { $regex: safeSearch, $options: "i" } },
+        { status: { $regex: safeSearch, $options: "i" } },
       ];
     }
 
@@ -59,14 +61,18 @@ class ExamAttendanceService {
   async saveBulk(attendanceRecords = []) {
     const results = [];
     for (const record of attendanceRecords) {
-      const { examName, className, sectionName, subjectName, studentName, roll } = record;
+      const { examName, className, sectionName, subjectName, studentName, studentId, roll } = record;
       
       const queryFilter = {
         examName,
         className,
         subjectName,
-        studentName,
       };
+      if (studentId) {
+        queryFilter.studentId = studentId;
+      } else if (studentName) {
+        queryFilter.studentName = studentName;
+      }
       if (sectionName) queryFilter.sectionName = sectionName;
 
       const updated = await ExamAttendanceModel.findOneAndUpdate(

@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { useLanguage } from '../../context/LanguageContext';
@@ -14,6 +14,13 @@ import { dataService } from '../../services/dataService';
 import type { LeaveApplication } from '../../types';
 import { Spinner } from '../../components/ui/Spinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
+import {
+  type ExportColumn,
+  handleCopyToClipboard,
+  handleExportCsv,
+  exportExcelWithImages,
+  exportPdfWithImages,
+} from '../../Utils/exportService';
 
 export const LeaveApplyPage: React.FC = () => {
   const { t } = useLanguage();
@@ -56,8 +63,37 @@ export const LeaveApplyPage: React.FC = () => {
     }
   };
 
-  const handleCopy = () => alert(t("Copy") + ": Success!");
-  const handleExport = (format: string) => alert("Export to " + format.toUpperCase() + ": Success!");
+  const exportColumns: ExportColumn[] = [
+    { header: "Applicant", accessorKey: "applicantName" },
+    { header: "Application To", accessorKey: "applicationTo" },
+    { header: "Category", accessorKey: "category" },
+    { header: "Schedule", accessorKey: "schedule" },
+    { header: "Days", accessorKey: "days" },
+    { header: "Status", accessorKey: "status" },
+  ];
+
+  const handleCopy = () => {
+    handleCopyToClipboard(leaves, exportColumns);
+  };
+
+  const handleExport = async (format: "csv" | "excel" | "pdf") => {
+    const filename = "leave-applications";
+    if (format === "csv") {
+      handleExportCsv(leaves, exportColumns, filename);
+    } else if (format === "excel") {
+      try {
+        await exportExcelWithImages(leaves, exportColumns, filename);
+      } catch {
+        handleExportCsv(leaves, exportColumns, filename);
+      }
+    } else if (format === "pdf") {
+      try {
+        await exportPdfWithImages(leaves, exportColumns, filename);
+      } catch {
+        handleExportCsv(leaves, exportColumns, filename);
+      }
+    }
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
