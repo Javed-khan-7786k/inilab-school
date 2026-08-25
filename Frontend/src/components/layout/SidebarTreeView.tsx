@@ -11,7 +11,7 @@
  *  - defaultOpen: whether to render expanded initially
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { SidebarMenuItemData } from "../../constants/LibrariandashboardData";
 import { Icon } from "../ui/Icon";
 import { useLanguage } from "../../context/LanguageContext";
@@ -37,11 +37,23 @@ export function SidebarTreeView({
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const { t } = useLanguage();
 
+  useEffect(() => {
+    if (defaultOpen || !!activeLabel) {
+      setIsOpen(true);
+    }
+  }, [defaultOpen, activeLabel]);
+
+  const isGroupActive = !!activeLabel;
+
   return (
     <li className={`treeview group/tv${isOpen ? " open" : ""}`}>
       <a
         href="#"
-        className="relative block border-l-[3px] border-l-transparent px-[15px] py-[12px] text-[14px] text-sidebartext hover:border-l-accent hover:bg-sidebarhover hover:text-white"
+        className={`relative block border-l-[3px] px-[15px] py-[12px] text-[14px] transition-colors duration-150 ${
+          isGroupActive
+            ? "border-l-accent bg-[#2a3848] text-white font-semibold"
+            : "border-l-transparent text-sidebartext hover:border-l-accent hover:bg-sidebarhover hover:text-white"
+        }`}
         onClick={(e) => {
           e.preventDefault();
           setIsOpen((prev) => !prev);

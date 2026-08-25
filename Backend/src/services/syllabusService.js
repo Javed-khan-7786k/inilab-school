@@ -51,16 +51,30 @@ class SyllabusService {
   }
 
   async create(data) {
+    if (data.classId === "" || data.classId === undefined) {
+      delete data.classId;
+    }
     const item = new SyllabusModel(data);
     await item.save();
     return { ...item.toObject(), id: item._id.toString() };
   }
 
   async update(id, data) {
-    const item = await SyllabusModel.findByIdAndUpdate(id, data, {
-      new: true,
-      runValidators: true,
-    });
+    if (data.classId === "" || data.classId === undefined) {
+      delete data.classId;
+    }
+    let item;
+    try {
+      item = await SyllabusModel.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+      });
+    } catch (e) {
+      item = await SyllabusModel.findOneAndUpdate({ _id: id }, data, {
+        new: true,
+        runValidators: true,
+      });
+    }
     if (!item) {
       throw ApiError.notFound("Syllabus not found");
     }

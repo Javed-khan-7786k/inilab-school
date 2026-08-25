@@ -32,8 +32,7 @@ const syllabusSchema = new mongoose.Schema(
       trim: true,
     },
     classId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
+      type: mongoose.Schema.Types.Mixed,
     },
   },
   {

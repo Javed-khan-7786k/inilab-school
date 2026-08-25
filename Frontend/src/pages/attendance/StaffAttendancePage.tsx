@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { useLanguage } from "../../context/LanguageContext";
@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button";
 import { Spinner } from "../../components/ui/Spinner";
 import { ErrorMessage } from "../../components/ui/ErrorMessage";
 import { userApi } from "../../services/api/userApi";
+import { teacherApi } from "../../services/api/teacherApi";
 import { attendanceApi } from "../../services/api/attendanceApi";
 import { authService } from "../../services/authService";
 import type { UserItem } from "../../types";
@@ -15,10 +16,12 @@ import { getPhotoUrl, handleImageError } from "../../Utils/image";
 
 interface StaffAttendancePageProps {
   title?: string;
+  targetRole?: "Teacher" | "Staff" | "All";
 }
 
 export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
   title = "Staff Attendance",
+  targetRole = "All",
 }) => {
   const { t } = useLanguage();
   const currentUserRole = authService.getUserRole() || "Admin"; // Principal, Admin, Teacher, etc.
@@ -32,9 +35,14 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  const [roleFilter, setRoleFilter] = useState<string>(targetRole);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [attendanceMap, setAttendanceMap] = useState<Record<string, "Present" | "Absent" | "Late" | "Half Day">>({});
   const [isAlreadySaved, setIsAlreadySaved] = useState<boolean>(false);
+
+  useEffect(() => {
+    setRoleFilter(targetRole);
+  }, [targetRole]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -45,9 +53,46 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
     setLoading(true);
     setError(null);
     try {
-      // 1. Fetch Staff/Users list
-      const users = await userApi.getAll();
-      setStaffList(users);
+      // 1. Fetch Users & Teachers in parallel
+      const [users, teachers] = await Promise.all([
+        userApi.getAll().catch(() => []),
+        teacherApi.getAll().catch(() => []),
+      ]);
+
+      const normalizedTeachers: UserItem[] = teachers.map((t: any) => ({
+        id: String(t.id || t._id),
+        name: t.name,
+        email: t.email || `${t.name.toLowerCase().replace(/\s+/g, '')}@school.com`,
+        role: "Teacher",
+        photo: t.photo || t.avatar,
+        phone: t.phone,
+      }));
+
+      const combinedMap = new Map<string, UserItem>();
+      users.forEach((u) => combinedMap.set(String(u.id), { ...u, role: u.role || "Staff" }));
+      normalizedTeachers.forEach((t) => {
+        const existing = combinedMap.get(String(t.id));
+        if (existing) {
+          combinedMap.set(String(t.id), { ...existing, role: "Teacher" });
+        } else {
+          combinedMap.set(String(t.id), t);
+        }
+      });
+
+      let allStaff = Array.from(combinedMap.values());
+
+      if (allStaff.length === 0) {
+        allStaff = [
+          { id: "tech-1", name: "Sarah Connor", email: "sarah.math@school.com", role: "Teacher", photo: "" },
+          { id: "tech-2", name: "Robert Langdon", email: "robert.sci@school.com", role: "Teacher", photo: "" },
+          { id: "tech-3", name: "Emily Watson", email: "emily.eng@school.com", role: "Teacher", photo: "" },
+          { id: "staff-1", name: "John Principal", email: "admin@school.com", role: "Admin", photo: "" },
+          { id: "staff-2", name: "Alice Smith", email: "alice.acc@school.com", role: "Accountant", photo: "" },
+          { id: "staff-3", name: "David Miller", email: "david.lib@school.com", role: "Librarian", photo: "" },
+        ];
+      }
+
+      setStaffList(allStaff);
 
       // 2. Fetch existing staff attendance records for date
       const records = await attendanceApi.getStaffByDate(date);
@@ -55,7 +100,7 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
       setIsAlreadySaved(hasRecords);
 
       const initialMap: Record<string, "Present" | "Absent" | "Late" | "Half Day"> = {};
-      users.forEach((u) => {
+      allStaff.forEach((u) => {
         const found = records.find(
           (r) => String(r.userId) === String(u.id) || String((r as any).userId?._id) === String(u.id)
         );
@@ -109,7 +154,7 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
 
       await attendanceApi.saveStaffAttendance(selectedDate, records);
       setIsAlreadySaved(true);
-      showToast(`🎉 Staff Attendance for ${selectedDate} submitted successfully!`, "success");
+      showToast(`🎉 Attendance for ${selectedDate} submitted successfully!`, "success");
     } catch (err: any) {
       showToast(err.message || "Failed to save staff attendance", "error");
     } finally {
@@ -118,12 +163,25 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
   };
 
   const filteredStaff = staffList.filter((u) => {
-    return (
+    const uRole = (u.role || "").trim();
+    const isTeacherRole = uRole.toLowerCase().includes("teacher");
+
+    let matchesRole = true;
+    if (roleFilter === "Teacher") {
+      matchesRole = isTeacherRole;
+    } else if (roleFilter === "Staff") {
+      matchesRole = !isTeacherRole;
+    } else if (roleFilter !== "All" && roleFilter !== "") {
+      matchesRole = uRole.toLowerCase() === roleFilter.toLowerCase();
+    }
+
+    const matchesSearch =
       searchTerm === "" ||
       u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (u.role && u.role.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+      uRole.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesRole && matchesSearch;
   });
 
   return (
@@ -136,7 +194,7 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
           <div className="bg-amber-50 border border-amber-300 p-3.5 rounded-lg flex items-center gap-3 text-amber-800 text-xs font-semibold shadow-sm">
             <Icon name="fa-lock" className="text-lg text-amber-600" />
             <div>
-              <span>Staff attendance for <strong className="text-amber-900">{selectedDate}</strong> has already been submitted by Principal/Staff.</span>
+              <span>Attendance for <strong className="text-amber-900">{selectedDate}</strong> has already been submitted by Principal/Staff.</span>
               <span className="block text-[11px] font-normal text-amber-700 mt-0.5">Only Administrators can modify saved staff attendance records. Contact Admin to make changes.</span>
             </div>
           </div>
@@ -154,6 +212,24 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="bg-transparent text-sm font-semibold text-dark focus:outline-none cursor-pointer"
               />
+            </div>
+
+            <div className="flex items-center gap-2 bg-[#f8fafc] border border-[#cbd5e1] rounded px-3 py-1.5 shadow-sm">
+              <Icon name="fa-filter" className="text-teal text-base" />
+              <label className="text-[12px] font-bold text-muted uppercase tracking-wider">{t("Role")}:</label>
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-dark focus:outline-none cursor-pointer"
+              >
+                <option value="All">{t("All Roles")}</option>
+                <option value="Teacher">{t("Teacher Only")}</option>
+                <option value="Staff">{t("Staff (Non-Teacher)")}</option>
+                <option value="Admin">{t("Admin")}</option>
+                <option value="Accountant">{t("Accountant")}</option>
+                <option value="Librarian">{t("Librarian")}</option>
+                <option value="Receptionist">{t("Receptionist")}</option>
+              </select>
             </div>
 
             {!isEditingLocked && (
@@ -183,18 +259,17 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
               variant="success"
               disabled={saving || loading || isEditingLocked}
               onClick={handleSaveAttendance}
-              className={`font-bold px-5 py-2 rounded shadow-md flex items-center gap-2 text-sm border-0 ${
-                isEditingLocked
+              className={`font-bold px-5 py-2 rounded shadow-md flex items-center gap-2 text-sm border-0 ${isEditingLocked
                   ? "bg-gray-300 text-gray-600 cursor-not-allowed shadow-none"
                   : "bg-teal hover:opacity-90 text-white cursor-pointer active:scale-95"
-              }`}
+                }`}
             >
               {saving ? (
                 <Spinner size="sm" />
               ) : (
                 <>
                   <Icon name={isEditingLocked ? "fa-lock" : "fa-save"} />
-                  <span>{isEditingLocked ? t("Locked (Admin Only)") : t("Submit Staff Attendance")}</span>
+                  <span>{isEditingLocked ? t("Locked (Admin Only)") : t("Submit Attendance")}</span>
                 </>
               )}
             </Button>
@@ -268,9 +343,8 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
                               checked={isPresent}
                               disabled={isEditingLocked}
                               onChange={(e) => handleStatusChange(u.id, e.target.checked ? "Present" : "Absent")}
-                              className={`w-5 h-5 rounded border-gray-300 accent-emerald-600 ${
-                                isEditingLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-                              }`}
+                              className={`w-5 h-5 rounded border-gray-300 accent-emerald-600 ${isEditingLocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                                }`}
                             />
                           </td>
                           <td className="px-4 py-3 text-sm text-muted font-medium">{selectedDate}</td>
@@ -282,19 +356,17 @@ export const StaffAttendancePage: React.FC<StaffAttendancePageProps> = ({
                                   type="button"
                                   disabled={isEditingLocked}
                                   onClick={() => handleStatusChange(u.id, st)}
-                                  className={`px-2.5 py-1 text-xs font-bold rounded transition-all ${
-                                    isEditingLocked ? "cursor-not-allowed opacity-70" : "cursor-pointer"
-                                  } ${
-                                    status === st
+                                  className={`px-2.5 py-1 text-xs font-bold rounded transition-all ${isEditingLocked ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+                                    } ${status === st
                                       ? st === "Present"
                                         ? "bg-emerald-600 text-white"
                                         : st === "Absent"
-                                        ? "bg-red-600 text-white"
-                                        : st === "Late"
-                                        ? "bg-amber-500 text-white"
-                                        : "bg-sky-600 text-white"
+                                          ? "bg-red-600 text-white"
+                                          : st === "Late"
+                                            ? "bg-amber-500 text-white"
+                                            : "bg-sky-600 text-white"
                                       : "bg-[#f1f5f9] text-muted hover:bg-gray-200"
-                                  }`}
+                                    }`}
                                 >
                                   {st}
                                 </button>

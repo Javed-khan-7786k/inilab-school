@@ -26,7 +26,10 @@ export function SidebarMenu({ menuItems }: SidebarMenuProps) {
         if (entry.type === "link") {
           const isActive =
             entry.data.href === location.pathname ||
-            (entry.data.label === "Dashboard" && location.pathname === "/dashboard");
+            (entry.data.label === "Dashboard" && location.pathname === "/dashboard") ||
+            (entry.data.href !== "/dashboard" &&
+              entry.data.href !== "#" &&
+              location.pathname.startsWith(entry.data.href + "/"));
 
           return (
             <SidebarMenuItem
@@ -39,9 +42,14 @@ export function SidebarMenu({ menuItems }: SidebarMenuProps) {
           );
         }
 
-        const isChildActive = entry.data.children?.some(
-          (child) => child.href === location.pathname
-        );
+        const activeChild = entry.data.children?.find((child) => {
+          if (!child.href || child.href === "#") return false;
+          if (child.href === location.pathname) return true;
+          if (child.href !== "/dashboard" && location.pathname.startsWith(child.href + "/")) return true;
+          return false;
+        });
+
+        const isChildActive = !!activeChild;
 
         return (
           <SidebarTreeView
@@ -50,7 +58,7 @@ export function SidebarMenu({ menuItems }: SidebarMenuProps) {
             label={entry.data.label}
             defaultOpen={entry.data.defaultOpen || isChildActive}
             children={entry.data.children}
-            activeLabel={isChildActive ? entry.data.label : undefined}
+            activeLabel={activeChild ? activeChild.label : undefined}
           />
         );
       })}
