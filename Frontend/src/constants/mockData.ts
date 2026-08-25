@@ -13,12 +13,15 @@ import type {
 } from "../types";
 
 export const MOCK_STUDENTS: Student[] = [
-  { id: 1, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop", name: "Alice Smith", roll: "101", email: "alice@example.com", className: "Class 1" },
-  { id: 2, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop", name: "Bob Johnson", roll: "102", email: "bob@example.com", className: "Class 1" },
-  { id: 3, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop", name: "Charlie Brown", roll: "103", email: "charlie@example.com", className: "Class 2" },
-  { id: 4, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop", name: "Diana Prince", roll: "104", email: "diana@example.com", className: "Class 2" },
-  { id: 5, photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop", name: "Ethan Hunt", roll: "105", email: "ethan@example.com", className: "Class 3" },
-  { id: 6, photo: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=100&h=100&fit=crop", name: "Fiona Gallagher", roll: "106", email: "fiona@example.com", className: "Class 3" }
+  { id: 1, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop", name: "Alice Smith", roll: "101", email: "alice@example.com", className: "One", sectionName: "A", section: "A", gender: "Female", dob: "2016-03-15" },
+  { id: 2, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop", name: "Bob Johnson", roll: "102", email: "bob@example.com", className: "One", sectionName: "A", section: "A", gender: "Male", dob: "2016-05-20" },
+  { id: 3, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop", name: "Chloe Davis", roll: "103", email: "chloe@example.com", className: "One", sectionName: "B", section: "B", gender: "Female", dob: "2016-08-10" },
+  { id: 4, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop", name: "Charlie Brown", roll: "201", email: "charlie@example.com", className: "Two", sectionName: "A", section: "A", gender: "Male", dob: "2015-02-12" },
+  { id: 5, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop", name: "Diana Prince", roll: "202", email: "diana@example.com", className: "Two", sectionName: "A", section: "A", gender: "Female", dob: "2015-07-24" },
+  { id: 6, photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop", name: "Ethan Hunt", roll: "301", email: "ethan@example.com", className: "Three", sectionName: "A", section: "A", gender: "Male", dob: "2014-11-05" },
+  { id: 7, photo: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=100&h=100&fit=crop", name: "Fiona Gallagher", roll: "302", email: "fiona@example.com", className: "Three", sectionName: "B", section: "B", gender: "Female", dob: "2014-04-18" },
+  { id: 8, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop", name: "George Clark", roll: "401", email: "george@example.com", className: "Four", sectionName: "A", section: "A", gender: "Male", dob: "2013-09-30" },
+  { id: 9, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop", name: "Hannah Abbott", roll: "501", email: "hannah@example.com", className: "Five", sectionName: "A", section: "A", gender: "Female", dob: "2012-01-14" }
 ];
 
 export const MOCK_TEACHERS: Teacher[] = [

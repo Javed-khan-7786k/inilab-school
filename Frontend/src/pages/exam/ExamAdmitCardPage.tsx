@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { PageHeaderBar } from "../../components/common/PageHeaderBar";
 import { Select } from "../../components/ui/Select";
@@ -9,7 +9,7 @@ import { Spinner } from "../../components/ui/Spinner";
 import { dataService } from "../../services/dataService";
 import { schoolSettingApi } from "../../services/api/schoolSettingApi";
 import { useLanguage } from "../../context/LanguageContext";
-import type { ExamItem, ClassItem, SectionItem, StudentListItem, ExamScheduleItem } from "../../types";
+import type { ExamItem, ClassItem, SectionItem, StudentListItem, ExamScheduleItem, SubjectItem } from "../../types";
 
 export const ExamAdmitCardPage: React.FC = () => {
   const { t } = useLanguage();
@@ -21,6 +21,7 @@ export const ExamAdmitCardPage: React.FC = () => {
   const [sectionsList, setSectionsList] = useState<SectionItem[]>([]);
   const [studentsList, setStudentsList] = useState<any[]>([]);
   const [schedulesList, setSchedulesList] = useState<ExamScheduleItem[]>([]);
+  const [subjectsList, setSubjectsList] = useState<SubjectItem[]>([]);
 
   // Selection state
   const [selectedExam, setSelectedExam] = useState<string>("");
@@ -46,12 +47,13 @@ export const ExamAdmitCardPage: React.FC = () => {
   useEffect(() => {
     const loadDropdowns = async () => {
       try {
-        const [exams, classes, sections, students, schedules, settings] = await Promise.all([
+        const [exams, classes, sections, students, schedules, subjects, settings] = await Promise.all([
           dataService.getExams().catch(() => []),
           dataService.getClasses().catch(() => []),
           dataService.getSections().catch(() => []),
           dataService.getStudents().catch(() => []),
           dataService.getExamSchedules().catch(() => []),
+          dataService.getSubjects().catch(() => []),
           schoolSettingApi.getSettings().catch(() => null),
         ]);
         
@@ -63,25 +65,29 @@ export const ExamAdmitCardPage: React.FC = () => {
           setAcademicYear(activeSess.year);
         }
 
-        // Provide defaults if DB returned empty arrays
-        const defaultExams: ExamItem[] = [
-          { id: "1", name: "Annual Examination 2026", date: "2026-03-01", note: "Final Exams" },
-          { id: "2", name: "Half Yearly Examination", date: "2025-10-15", note: "Midterm Exams" },
-          { id: "3", name: "First Unit Test", date: "2025-07-20", note: "Unit Assessment" },
-        ];
-        const defaultClasses: ClassItem[] = [
-          { id: "1", name: "One", classNumeric: 1, teacherName: "John Doe" },
-          { id: "2", name: "Two", classNumeric: 2, teacherName: "Jane Smith" },
-          { id: "3", name: "Three", classNumeric: 3, teacherName: "Robert Johnson" },
-          { id: "4", name: "Four", classNumeric: 4, teacherName: "Emily Davis" },
-          { id: "5", name: "Five", classNumeric: 5, teacherName: "Michael Brown" },
-        ];
+        // Build combined classes list (from API + any unique class names in students list)
+        const classNamesFromApi = new Set((classes || []).map((c: any) => c.name?.toLowerCase()));
+        const extraClassesFromStudents: ClassItem[] = [];
+        (students || []).forEach((st: any) => {
+          const cName = (st.className || st.class || "").trim();
+          if (cName && !classNamesFromApi.has(cName.toLowerCase())) {
+            classNamesFromApi.add(cName.toLowerCase());
+            extraClassesFromStudents.push({
+              id: `cls-${cName}`,
+              name: cName,
+              classNumeric: cName,
+              teacherName: "",
+            });
+          }
+        });
+        const combinedClasses = [...(classes || []), ...extraClassesFromStudents];
 
-        setExamsList(exams.length > 0 ? exams : defaultExams);
-        setClassesList(classes.length > 0 ? classes : defaultClasses);
-        setSectionsList(sections);
-        setStudentsList(students);
-        setSchedulesList(schedules);
+        setExamsList(exams || []);
+        setClassesList(combinedClasses);
+        setSectionsList(sections || []);
+        setStudentsList(students || []);
+        setSchedulesList(schedules || []);
+        setSubjectsList(subjects || []);
       } catch (err) {
         console.error("Failed to load admit card data:", err);
       }
@@ -99,29 +105,34 @@ export const ExamAdmitCardPage: React.FC = () => {
     ? sectionsList.filter((s) => s.className?.toLowerCase() === selectedClass.toLowerCase())
     : sectionsList;
 
-  const filteredStudents = studentsList.filter((st: any) => {
-    const stClass = st.className || st.class || "";
-    const stSec = st.sectionName || st.section || "";
-    const matchClass = !selectedClass || (stClass && stClass.toLowerCase() === selectedClass.toLowerCase());
-    const matchSec = !selectedSection || !stSec || (stSec && stSec.toLowerCase() === selectedSection.toLowerCase());
-    return matchClass && matchSec;
-  });
+  const normalizeClass = (val: string) => {
+    if (!val) return "";
+    const cleaned = val.toString().trim().toLowerCase().replace(/^class\s*/i, "");
+    const map: Record<string, string> = {
+      "1": "one", "one": "one",
+      "2": "two", "two": "two",
+      "3": "three", "three": "three",
+      "4": "four", "four": "four",
+      "5": "five", "five": "five",
+      "6": "graduate", "six": "graduate", "graduate": "graduate"
+    };
+    return map[cleaned] || cleaned;
+  };
 
-  // Ensure available students list for dropdown is never empty when a class is selected
-  const availableStudents = React.useMemo(() => {
-    if (filteredStudents.length > 0) {
-      return filteredStudents;
-    }
-    const cls = selectedClass || "One";
-    const sec = selectedSection || "A";
-    return [
-      { id: "std-101", name: "Alex Morgan", roll: "101", className: cls, sectionName: sec, email: "alex@school.com", gender: "Male" },
-      { id: "std-102", name: "Benjamin Clark", roll: "102", className: cls, sectionName: sec, email: "benjamin@school.com", gender: "Male" },
-      { id: "std-103", name: "Catherine Davis", roll: "103", className: cls, sectionName: sec, email: "catherine@school.com", gender: "Female" },
-      { id: "std-104", name: "Daniel Evans", roll: "104", className: cls, sectionName: sec, email: "daniel@school.com", gender: "Male" },
-      { id: "std-105", name: "Emma Wilson", roll: "105", className: cls, sectionName: sec, email: "emma@school.com", gender: "Female" },
-    ];
-  }, [filteredStudents, selectedClass, selectedSection]);
+  const filteredStudents = useMemo(() => {
+    return studentsList.filter((st: any) => {
+      const stClass = (st.className || st.class || "").toString().trim();
+      const stSec = (st.sectionName || st.section || "").toString().trim();
+      const selClass = selectedClass.trim();
+      const selSec = selectedSection.trim();
+
+      const matchClass = !selClass || normalizeClass(stClass) === normalizeClass(selClass);
+      const matchSec = !selSec || !stSec || stSec.toLowerCase() === selSec.toLowerCase();
+      return matchClass && matchSec;
+    });
+  }, [studentsList, selectedClass, selectedSection]);
+
+  const availableStudents = filteredStudents;
 
   const handleGenerate = () => {
     if (!selectedExam) {
@@ -143,70 +154,75 @@ export const ExamAdmitCardPage: React.FC = () => {
     // Target students
     let targets = [...availableStudents];
     if (studentSelectionType === "specific" && selectedStudentId) {
-      targets = targets.filter((st: any) => String(st.id) === String(selectedStudentId));
+      targets = targets.filter((st: any) => String(st.id || st._id) === String(selectedStudentId));
+    }
+
+    // Fallback for testing mode if no DB students found matching criteria
+    if (targets.length === 0) {
+      targets = [
+        {
+          id: `test-st-1`,
+          name: `Test Candidate 1 (${selectedClass})`,
+          roll: "101",
+          email: `candidate1.${selectedClass.toLowerCase()}@school.com`,
+          className: selectedClass,
+          sectionName: selectedSection || "A",
+          gender: "Male",
+          photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop"
+        },
+        {
+          id: `test-st-2`,
+          name: `Test Candidate 2 (${selectedClass})`,
+          roll: "102",
+          email: `candidate2.${selectedClass.toLowerCase()}@school.com`,
+          className: selectedClass,
+          sectionName: selectedSection || "A",
+          gender: "Female",
+          photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop"
+        }
+      ];
     }
 
     // Schedules for selected exam & class
-    let examSchedules = schedulesList.filter((sch) => {
-      const matchEx = sch.examName?.toLowerCase() === selectedExam.toLowerCase();
-      const matchCl = sch.className?.toLowerCase() === selectedClass.toLowerCase();
-      const matchSec =
-        !selectedSection ||
-        !sch.sectionName ||
-        sch.sectionName.toLowerCase() === selectedSection.toLowerCase();
+    let examSchedules = schedulesList.filter((sch: any) => {
+      const schEx = String(sch.examName || "").trim().toLowerCase();
+      const schCl = String(sch.className || "").trim().toLowerCase();
+      const schSec = String(sch.sectionName || "").trim().toLowerCase();
+
+      const matchEx = schEx === selectedExam.trim().toLowerCase();
+      const matchCl = normalizeClass(schCl) === normalizeClass(selectedClass);
+      const matchSec = !selectedSection.trim() || !schSec || schSec === selectedSection.trim().toLowerCase();
       return matchEx && matchCl && matchSec;
     });
 
+    // If no exam schedule records found, check for subjects in that class to generate schedule entries
     if (examSchedules.length === 0) {
-      examSchedules = [
-        {
-          id: "1",
+      const classSubjects = subjectsList.filter((sub: any) => {
+        const subCl = String(sub.className || "").trim().toLowerCase();
+        return subCl === selectedClass.trim().toLowerCase();
+      });
+
+      if (classSubjects.length > 0) {
+        const selectedExamObj = examsList.find((ex: any) => ex.name === selectedExam);
+        const baseDate = selectedExamObj?.date || "To be announced";
+        examSchedules = classSubjects.map((sub: any, idx: number) => ({
+          id: sub.id || sub._id || `sub-sch-${idx}`,
           examName: selectedExam,
           className: selectedClass,
-          sectionName: selectedSection || "A",
-          subjectName: "Mathematics",
-          date: "10-Mar-2026",
+          sectionName: selectedSection || "All",
+          subjectName: sub.name,
+          date: baseDate,
           time: "09:00 AM - 12:00 PM",
-          room: "Hall A - Room 101",
-        },
-        {
-          id: "2",
-          examName: selectedExam,
-          className: selectedClass,
-          sectionName: selectedSection || "A",
-          subjectName: "Science",
-          date: "12-Mar-2026",
-          time: "09:00 AM - 12:00 PM",
-          room: "Hall A - Room 102",
-        },
-        {
-          id: "3",
-          examName: selectedExam,
-          className: selectedClass,
-          sectionName: selectedSection || "A",
-          subjectName: "English Literature",
-          date: "15-Mar-2026",
-          time: "09:00 AM - 12:00 PM",
-          room: "Hall B - Room 201",
-        },
-        {
-          id: "4",
-          examName: selectedExam,
-          className: selectedClass,
-          sectionName: selectedSection || "A",
-          subjectName: "Social Studies",
-          date: "18-Mar-2026",
-          time: "09:00 AM - 12:00 PM",
-          room: "Hall B - Room 202",
-        },
-      ] as any;
+          room: "Exam Hall",
+        })) as any;
+      }
     }
 
     const cards = targets.map((st: any) => ({
       student: st,
       examName: selectedExam,
       className: st.className || st.class || selectedClass,
-      sectionName: st.sectionName || st.section || selectedSection || "A",
+      sectionName: st.sectionName || st.section || selectedSection || "N/A",
       schedules: examSchedules,
     }));
 
@@ -274,8 +290,8 @@ export const ExamAdmitCardPage: React.FC = () => {
                 className="w-full"
               >
                 <option value="">{t("Select Exam")}</option>
-                {examsList.map((ex) => (
-                  <option key={ex.id} value={ex.name}>
+                {examsList.map((ex: any) => (
+                  <option key={ex.id || ex._id} value={ex.name}>
                     {ex.name}
                   </option>
                 ))}
@@ -292,8 +308,8 @@ export const ExamAdmitCardPage: React.FC = () => {
                 className="w-full"
               >
                 <option value="">{t("Select Class")}</option>
-                {classesList.map((c) => (
-                  <option key={c.id} value={c.name}>
+                {classesList.map((c: any) => (
+                  <option key={c.id || c._id} value={c.name}>
                     {c.name}
                   </option>
                 ))}
@@ -310,8 +326,8 @@ export const ExamAdmitCardPage: React.FC = () => {
                 className="w-full"
               >
                 <option value="">{t("Select Section")}</option>
-                {filteredSections.map((s) => (
-                  <option key={s.id} value={s.name}>
+                {filteredSections.map((s: any) => (
+                  <option key={s.id || s._id} value={s.name}>
                     {s.name}
                   </option>
                 ))}
@@ -364,8 +380,8 @@ export const ExamAdmitCardPage: React.FC = () => {
                 className="w-full text-xs"
               >
                 <option value="">{t("-- Select Student from List --")}</option>
-                {availableStudents.map((st) => (
-                  <option key={st.id} value={st.id}>
+                {availableStudents.map((st: any) => (
+                  <option key={st.id || st._id} value={st.id || st._id}>
                     {st.name} ({st.roll ? `Roll No: ${st.roll}` : "No Roll"})
                   </option>
                 ))}
@@ -443,7 +459,7 @@ export const ExamAdmitCardPage: React.FC = () => {
                       </div>
                       <div>
                         <span className="font-bold text-gray-500">{t("Roll Number")}:</span>{" "}
-                        <span className="font-semibold text-dark text-sm">{card.student.roll || "101"}</span>
+                        <span className="font-semibold text-dark text-sm">{card.student.roll || "N/A"}</span>
                       </div>
                       <div>
                         <span className="font-bold text-gray-500">{t("Class")}:</span>{" "}
@@ -459,16 +475,18 @@ export const ExamAdmitCardPage: React.FC = () => {
                       </div>
                       <div>
                         <span className="font-bold text-gray-500">{t("Gender")}:</span>{" "}
-                        <span className="font-semibold text-dark">{card.student.gender || "Male"}</span>
+                        <span className="font-semibold text-dark">{card.student.gender || "N/A"}</span>
                       </div>
                     </div>
 
                     <div className="shrink-0">
                       <img
                         src={
-                          card.student.photo ||
-                          card.student.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${card.student.name}`
+                          card.student.photo && card.student.photo.trim() !== ""
+                            ? card.student.photo
+                            : card.student.avatar && card.student.avatar.trim() !== ""
+                            ? card.student.avatar
+                            : `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(card.student.name || "student")}`
                         }
                         alt={card.student.name}
                         className="w-24 h-28 object-cover rounded border-2 border-gray-300 shadow-sm"

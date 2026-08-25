@@ -7,6 +7,8 @@ const studentSchema = new mongoose.Schema(
     roll: { type: String, required: [true, "Roll number is required"], trim: true },
     email: { type: String, trim: true, lowercase: true },
     className: { type: String, required: [true, "Class is required"], trim: true },
+    sectionName: { type: String, trim: true, default: "A" },
+    section: { type: String, trim: true, default: "A" },
 
     // Extended admission profile (captured via the full Student form)
     dob: { type: String, trim: true },

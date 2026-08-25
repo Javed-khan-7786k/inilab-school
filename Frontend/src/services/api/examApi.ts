@@ -4,6 +4,7 @@ import type { ExamItem } from "../../types";
 export const examApi = {
   async getAll(params?: { search?: string; page?: number; limit?: number }): Promise<ExamItem[]> {
     const response = await apiClient.get("/exams", { params });
+    console.log("response",response.data)
     return response.data.data;
   },
 

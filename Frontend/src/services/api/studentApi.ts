@@ -4,6 +4,7 @@ import type { Student } from "../../types";
 export const studentApi = {
   async getAll(params?: { search?: string; className?: string; page?: number; limit?: number }): Promise<Student[]> {
     const response = await apiClient.get("/students", { params });
+    console.log("student",response.data)
     // In our backend API, the paginated data structure returns pagination and data array.
     // Let's check: Backend response returns data in response.data.data.
     return response.data.data;

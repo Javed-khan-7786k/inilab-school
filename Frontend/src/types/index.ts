@@ -5,6 +5,11 @@ export interface Student {
   roll: string;
   email: string;
   className: string;
+  sectionName?: string;
+  section?: string;
+  gender?: string;
+  dob?: string;
+  avatar?: string;
 }
 
 export interface StudentListItem {

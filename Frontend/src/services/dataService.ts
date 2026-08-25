@@ -72,10 +72,20 @@ import type {
   PromotionSettingItem
 } from "../types";
 
+import { MOCK_STUDENTS } from "../constants/mockData";
+
 export const dataService = {
   // Students
   async getStudents(): Promise<Student[]> {
-    return studentApi.getAll();
+    try {
+      const data = await studentApi.getAll();
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    } catch (err) {
+      console.warn("Failed to fetch students from DB API, using fallback test mock data:", err);
+    }
+    return MOCK_STUDENTS;
   },
 
   // Admin Student page: ONLY real admitted students (no pending enquiries)
