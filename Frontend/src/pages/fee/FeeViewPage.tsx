@@ -7,7 +7,7 @@ import { PageHeaderBar } from "../../components/common/PageHeaderBar";
 import { Button } from "../../components/ui/Button";
 import { Icon } from "../../components/ui/Icon";
 import { FeeEditModal } from "../../components/fee/FeeEditModal";
-import { MOCK_FEES } from "../../constants/mockData";
+import { dataService } from "../../services/dataService";
 import type { FeeRecord } from "../../types";
 
 const FeeViewPage: React.FC = () => {
@@ -17,11 +17,17 @@ const FeeViewPage: React.FC = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   useEffect(() => {
-    // In a real app, this would be an API call to get fee by ID
-    const fee = MOCK_FEES.find((f) => String(f.id) === id);
-    if (fee) {
-      setFeeData(fee);
-    }
+    const fetchFee = async () => {
+      try {
+        if (id) {
+          const fee = await dataService.getFeeById(id);
+          setFeeData(fee);
+        }
+      } catch (err) {
+        console.error("Failed to load fee", err);
+      }
+    };
+    fetchFee();
   }, [id]);
 
   if (!feeData) {
@@ -86,9 +92,14 @@ const FeeViewPage: React.FC = () => {
     doc.save(`${feeData.studentName}_FeeDetails.pdf`);
   };
 
-  const handleSaveFee = (updatedFee: FeeRecord) => {
-    setFeeData(updatedFee);
-    setEditModalOpen(false);
+  const handleSaveFee = async (updatedFee: FeeRecord) => {
+    try {
+      const saved = await dataService.updateFee(updatedFee.id, updatedFee);
+      setFeeData(saved);
+      setEditModalOpen(false);
+    } catch (err) {
+      console.error("Failed to update fee", err);
+    }
   };
 
   return (

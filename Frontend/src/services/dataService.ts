@@ -32,6 +32,7 @@ import { takeExamApi } from "./api/takeExamApi";
 import { salaryTemplateApi } from "./api/salaryTemplateApi";
 import { hourlyTemplateApi } from "./api/hourlyTemplateApi";
 import { overtimeApi } from "./api/overtimeApi";
+import { feeApi } from "./api/feeApi";
 
 import type {
   Student,
@@ -69,7 +70,8 @@ import type {
   ExamAttendanceItem,
   MarkItem,
   MarkDistributionItem,
-  PromotionSettingItem
+  PromotionSettingItem,
+  FeeRecord
 } from "../types";
 
 import { MOCK_STUDENTS } from "../constants/mockData";
@@ -626,5 +628,19 @@ export const dataService = {
   },
   async deleteOvertime(id: string | number): Promise<void> {
     await overtimeApi.delete(id);
+  },
+
+  // Fees
+  async getFees(params?: { className?: string; sectionName?: string }): Promise<FeeRecord[]> {
+    return feeApi.getAll(params);
+  },
+  async getFeeById(id: string | number): Promise<FeeRecord> {
+    return feeApi.getById(id);
+  },
+  async getFeeByStudentId(studentId: string | number): Promise<FeeRecord> {
+    return feeApi.getByStudentId(studentId);
+  },
+  async updateFee(id: string | number, data: Partial<FeeRecord>): Promise<FeeRecord> {
+    return feeApi.update(id, data);
   }
 };

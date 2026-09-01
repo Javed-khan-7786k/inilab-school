@@ -8,7 +8,6 @@ import { Button } from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../../components/ui/Icon";
 import { FeeEditModal } from "../../components/fee/FeeEditModal";
-import { MOCK_FEES } from "../../constants/mockData";
 import { dataService } from "../../services/dataService";
 import { useLanguage } from "../../context/LanguageContext";
 import type { ClassItem, SectionItem, FeeRecord } from "../../types";
@@ -32,14 +31,15 @@ const FeeDashboard: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [classes, sections] = await Promise.all([
+        const [classes, sections, fees] = await Promise.all([
           dataService.getClasses().catch(() => []),
           dataService.getSections().catch(() => []),
+          dataService.getFees().catch(() => []),
         ]);
         
         setClassesList(classes || []);
         setSectionsList(sections || []);
-        setFeesList(MOCK_FEES);
+        setFeesList(fees || []);
       } catch (err) {
         console.error("Failed to load fee dashboard data:", err);
       }
@@ -73,11 +73,16 @@ const FeeDashboard: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  const handleSaveFee = (updatedFee: FeeRecord) => {
-    setFeesList((prev) =>
-      prev.map((f) => (f.id === updatedFee.id ? updatedFee : f))
-    );
-    setEditModalOpen(false);
+  const handleSaveFee = async (updatedFee: FeeRecord) => {
+    try {
+      const saved = await dataService.updateFee(updatedFee.id, updatedFee);
+      setFeesList((prev) =>
+        prev.map((f) => (f.id === saved.id ? saved : f))
+      );
+      setEditModalOpen(false);
+    } catch (err) {
+      console.error("Failed to update fee", err);
+    }
   };
 
   const handleExportAllPDF = () => {

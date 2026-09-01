@@ -11,6 +11,7 @@ import holidayRoutes from "./holidayRoutes.js";
 import leaveRoutes from "./leaveRoutes.js";
 import documentRoutes from "./documentRoutes.js";
 import dashboardRoutes from "./dashboardRoutes.js";
+import feeRoutes from "./feeRoutes.js";
 
 import enquiryRoutes from "./enquiryRoutes.js";
 import importRoutes from "./importRoutes.js";
@@ -58,6 +59,7 @@ router.use("/holidays", holidayRoutes);
 router.use("/leaves", leaveRoutes);
 router.use("/documents", documentRoutes);
 router.use("/dashboard", dashboardRoutes);
+router.use("/fees", feeRoutes);
 
 router.use("/enquiries", enquiryRoutes);
 router.use("/import", importRoutes);
