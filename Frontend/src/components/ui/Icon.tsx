@@ -3,6 +3,8 @@ import * as Lucide from "lucide-react";
 
 const iconMap: Record<string, React.ComponentType<Lucide.LucideProps>> = {
   "fa-laptop": Lucide.LayoutDashboard,
+  "fa-fee": Lucide.HandCoins,
+  "fa-list": Lucide.LayoutList,
   "fa-user": Lucide.User,
   "fa-User": Lucide.User,
   "fa-users": Lucide.Users,
@@ -74,7 +76,6 @@ const iconMap: Record<string, React.ComponentType<Lucide.LucideProps>> = {
   "fa-money": Lucide.Banknote,
   "fa-shield": Lucide.Shield,
   "fa-question-circle": Lucide.HelpCircle,
-  "fa-list": Lucide.List,
 };
 
 interface IconProps {

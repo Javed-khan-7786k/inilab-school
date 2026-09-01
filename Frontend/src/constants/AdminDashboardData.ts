@@ -165,6 +165,7 @@ export const sidebarMenuItems: SidebarEntry[] = [
       ],
     },
   },
+  { type: "link", data: { icon: "fa-fee", label: "Fee", href: "/dashboard/fee" } },
   {
     type: "treeview",
     data: {

@@ -76,7 +76,10 @@ import {
   MessageMailPage,
   ProductLicensePage,
   SettingsMainPage,
+  
 } from "./pages";
+import FeeDashboard from "./pages/fee/FeeDashboard";
+import FeeViewPage from "./pages/fee/FeeViewPage";
 
 function App() {
   return (
@@ -1000,6 +1003,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <MessageMailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/fee"
+            element={
+              <ProtectedRoute>
+                <FeeDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/fee/view/:id"
+            element={
+              <ProtectedRoute>
+                <FeeViewPage />
               </ProtectedRoute>
             }
           />

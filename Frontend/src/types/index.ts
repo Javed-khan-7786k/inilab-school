@@ -454,3 +454,26 @@ export interface Student {
   lastClassAttended?: string;
   documents?: DocumentObject[];
 }
+
+export interface FeeMonthlyDetail {
+  month: string;
+  amount: number;
+  paid: number;
+  due: number;
+  status: "Paid" | "Partial" | "Unpaid";
+}
+
+export interface FeeRecord {
+  id: string | number;
+  studentId: string | number;
+  studentName: string;
+  roll: string;
+  className: string;
+  sectionName: string;
+  photo?: string;
+  totalFee: number;
+  totalPaid: number;
+  totalDue: number;
+  status: "Paid" | "Partial" | "Unpaid";
+  monthlyDetails: FeeMonthlyDetail[];
+}

@@ -9,7 +9,8 @@ import type {
   LeaveApplication,
   DocumentItem,
   ProfileDetails,
-  UserItem
+  UserItem,
+  FeeRecord
 } from "../types";
 
 export const MOCK_STUDENTS: Student[] = [
@@ -204,3 +205,31 @@ export const MOCK_USERS: UserItem[] = [
   { id: 4, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop", name: "User 4", email: "user4@example.com", role: "Accountant" },
   { id: 5, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop", name: "Nazmus Sakib", email: "sakibb@gmail.com", role: "Accountant" }
 ];
+
+export const MOCK_FEES: FeeRecord[] = MOCK_STUDENTS.map((student) => ({
+  id: student.id,
+  studentId: student.id,
+  studentName: student.name,
+  roll: student.roll,
+  className: student.className,
+  sectionName: student.sectionName || "A",
+  photo: student.photo,
+  totalFee: 12000,
+  totalPaid: 6000,
+  totalDue: 6000,
+  status: "Partial",
+  monthlyDetails: [
+    { month: "January", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "February", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "March", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "April", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "May", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "June", amount: 1000, paid: 1000, due: 0, status: "Paid" },
+    { month: "July", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+    { month: "August", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+    { month: "September", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+    { month: "October", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+    { month: "November", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+    { month: "December", amount: 1000, paid: 0, due: 1000, status: "Unpaid" },
+  ]
+}));
