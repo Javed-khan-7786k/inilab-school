@@ -34,6 +34,7 @@ import ExamAttendanceModel from "../src/models/ExamAttendanceModel.js";
 import MarkModel from "../src/models/MarkModel.js";
 import MarkDistributionModel from "../src/models/MarkDistributionModel.js";
 import PromotionSettingModel from "../src/models/PromotionSettingModel.js";
+import Fee from "../src/models/Fee.js";
 
 // ==============================================================================
 // DATABASE SEED SCRIPT FOR INILAB SCHOOL SYSTEM
@@ -266,6 +267,7 @@ const seedDB = async () => {
     await Holiday.deleteMany({});
     await Leave.deleteMany({});
     await Document.deleteMany({});
+    await Fee.deleteMany({});
 
     console.log("Collections cleared. Seeding data...");
 
@@ -278,6 +280,23 @@ const seedDB = async () => {
     // Seed Students
     await Student.insertMany(mockStudents);
     console.log(`Seeded ${mockStudents.length} students successfully.`);
+
+    // Seed Fees
+    const dbStudents = await Student.find();
+    const generateDefaultMonthlyDetails = () => {
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      return months.map(month => ({ month, amount: 1000, paid: 0, due: 1000, status: "Unpaid" }));
+    };
+    const feeRecords = dbStudents.map(student => ({
+      studentId: student._id,
+      totalFee: 12000,
+      totalPaid: 0,
+      totalDue: 12000,
+      status: "Unpaid",
+      monthlyDetails: generateDefaultMonthlyDetails()
+    }));
+    await Fee.insertMany(feeRecords);
+    console.log(`Seeded ${feeRecords.length} fees successfully.`);
 
     // Seed Teachers
     await Teacher.insertMany(mockTeachers);
