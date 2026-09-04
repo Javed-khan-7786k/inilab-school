@@ -71,7 +71,12 @@ export const FeeEditModal: React.FC<FeeEditModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Edit Fee Payment">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit Fee Payment"
+      maxWidthClass="max-w-4xl"
+    >
       <form onSubmit={handleSubmit} className="p-5">
         <div className="mb-6 bg-gray-50 p-4 rounded border border-gray-200">
           <h3 className="font-semibold text-gray-700 text-sm mb-2">Student Information</h3>

@@ -471,9 +471,75 @@ export interface FeeRecord {
   className: string;
   sectionName: string;
   photo?: string;
+  fatherName?: string;
   totalFee: number;
   totalPaid: number;
   totalDue: number;
   status: "Paid" | "Partial" | "Unpaid";
   monthlyDetails: FeeMonthlyDetail[];
 }
+
+export interface FeeHeadItem {
+  headName: string;
+  term: string;
+  period?: string;
+  amount: number;
+  isSelected?: boolean;
+  isTuition?: boolean;
+}
+
+export interface FeeReceiptItem {
+  headName: string;
+  term: string;
+  period: string;
+  amount: number;
+}
+
+export interface FeeReceipt {
+  id: string;
+  receiptNo: string;
+  studentId: string;
+  studentName: string;
+  roll: string;
+  className: string;
+  sectionName: string;
+  fatherName?: string;
+  academicYear: string;
+  schoolName?: string;
+  schoolAddress?: string;
+  schoolPhone?: string;
+  affiliationBoard?: string;
+  registrationNo?: string;
+  paymentDate: string;
+  items: FeeReceiptItem[];
+  subTotal: number;
+  discount: number;
+  fine: number;
+  totalPaid: number;
+  balanceDue: number;
+  paymentMode: "Cash" | "UPI / Online" | "Cheque" | "Bank Transfer" | "Card";
+  transactionId?: string;
+  remarks?: string;
+  collectedBy: string;
+  createdAt?: string;
+}
+
+export interface StudentFeeSearchResult {
+  id: string;
+  studentId: string;
+  name: string;
+  roll: string;
+  className: string;
+  sectionName: string;
+  photo?: string;
+  fatherName?: string;
+  fatherContact?: string;
+  monthlyTuition: number;
+  totalFee: number;
+  totalPaid: number;
+  totalDue: number;
+  feeStatus: "Paid" | "Partial" | "Unpaid";
+  monthlyDetails: FeeMonthlyDetail[];
+  feeRecordId?: string;
+}
+

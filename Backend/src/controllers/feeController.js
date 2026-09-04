@@ -38,3 +38,35 @@ export const deleteFee = asyncHandler(async (req, res) => {
   await feeService.deleteFee(req.params.id);
   res.status(200).json(new ApiResponse(200, "Fee deleted successfully", null));
 });
+
+// New handlers for Excel Fee Structure, Student Search, and Receipt Generation
+export const getFeeStructure = asyncHandler(async (req, res) => {
+  const structure = await feeService.getFeeStructure(req.query.className);
+  res.status(200).json(new ApiResponse(200, "Fee structure retrieved successfully", structure));
+});
+
+export const updateFeeStructure = asyncHandler(async (req, res) => {
+  const structure = await feeService.updateFeeStructure(req.body);
+  res.status(200).json(new ApiResponse(200, "Fee structure updated successfully", structure));
+});
+
+export const searchStudents = asyncHandler(async (req, res) => {
+  const query = req.query.query || req.query.q || "";
+  const students = await feeService.searchStudents(query);
+  res.status(200).json(new ApiResponse(200, "Students retrieved successfully", students));
+});
+
+export const collectFeeAndGenerateReceipt = asyncHandler(async (req, res) => {
+  const receipt = await feeService.collectFee(req.body);
+  res.status(201).json(new ApiResponse(201, "Fee collected and receipt generated successfully", receipt));
+});
+
+export const getReceipts = asyncHandler(async (req, res) => {
+  const receipts = await feeService.getReceipts(req.query);
+  res.status(200).json(new ApiResponse(200, "Receipts retrieved successfully", receipts));
+});
+
+export const getReceiptById = asyncHandler(async (req, res) => {
+  const receipt = await feeService.getReceiptById(req.params.id);
+  res.status(200).json(new ApiResponse(200, "Receipt retrieved successfully", receipt));
+});

@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik, type FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { validateCredentials } from '../constants/authCredentials'
+import { authService } from '../services/authService'
 
 interface LoginFormValues {
   username: string
@@ -36,32 +36,20 @@ export const Login = () => {
   const navigate = useNavigate()
   const [loginError, setLoginError] = useState('')
 
-  const handleSubmit = (values: LoginFormValues, helpers: FormikHelpers<LoginFormValues>) => {
-    const credential = validateCredentials(values.username.trim(), values.password)
-
-    if (credential) {
-      setLoginError('')
-      
-      let displayName = credential.username;
-      if (credential.role === 'Receptionist') {
-        displayName = 'User 2';
-      } else if (credential.role === 'Librarian') {
-        displayName = 'User 3';
+  const handleSubmit = async (values: LoginFormValues, helpers: FormikHelpers<LoginFormValues>) => {
+    try {
+      const user = await authService.login(values.username.trim(), values.password);
+      if (user) {
+        setLoginError('');
+        navigate('/dashboard');
       } else {
-        displayName = credential.username.charAt(0).toUpperCase() + credential.username.slice(1);
+        setLoginError('Invalid username or password. Please try again.');
       }
-
-      sessionStorage.setItem('isAuthenticated', 'true')
-      sessionStorage.setItem('userRole', credential.role)
-      sessionStorage.setItem('userId', credential.id)
-      sessionStorage.setItem('userName', displayName)
-      sessionStorage.setItem('loginUsername', credential.username)
-      navigate('/dashboard')
-    } else {
-      setLoginError('Invalid username or password. Please try again.')
+    } catch (err: any) {
+      setLoginError(err.message || 'Invalid username or password. Please try again.');
+    } finally {
+      helpers.setSubmitting(false);
     }
-
-    helpers.setSubmitting(false)
   }
 
   return (

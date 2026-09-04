@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
@@ -9,9 +9,9 @@ import { Button } from '../../components/ui/Button';
 import { Spinner } from '../../components/ui/Spinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { userApi } from '../../services/api/userApi';
+import { attendanceApi, type AttendanceRecord } from '../../services/api/attendanceApi';
 import type { ProfileDetails } from '../../types';
 import { getPhotoUrl, handleImageError } from "../../Utils/image";
-import { DEFAULT_ATTENDANCE } from '../../constants/mockData';
 
 export const AttendenceViewPage: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
@@ -19,6 +19,7 @@ export const AttendenceViewPage: React.FC = () => {
 
   const [activeSubTab, setActiveSubTab] = useState<'profile' | 'attendance' | 'document'>('profile');
   const [profile, setProfile] = useState<ProfileDetails | null>(null);
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,6 +31,15 @@ export const AttendenceViewPage: React.FC = () => {
       if (profileKey && id) {
         const profileData = await userApi.getProfile(profileKey, id);
         setProfile(profileData);
+
+        const month = new Date().toISOString().slice(0, 7);
+        try {
+          const attendanceData = await attendanceApi.getUserAttendance(profileKey, id, month);
+          setAttendance(attendanceData);
+        } catch (attErr) {
+          console.warn("Failed to fetch attendance:", attErr);
+          setAttendance([]);
+        }
       }
     } catch (err: any) {
       setError(err.message || "Failed to load details");
@@ -161,11 +171,17 @@ export const AttendenceViewPage: React.FC = () => {
             
               <div className="space-y-4">
                 {/* 12x31 Month Day Grid */}
-                <AttendanceCalendarGrid attendance={DEFAULT_ATTENDANCE} />
+                <AttendanceCalendarGrid
+                  attendance={attendance.reduce((acc, curr) => {
+                    const day = parseInt(curr.date.split('-')[2]);
+                    acc[day] = curr.status;
+                    return acc;
+                  }, {} as Record<number, string>)}
+                />
                 
                 {/* Stats list footer */}
                 <div className="mt-4 text-[13px] text-muted select-none">
-                  {t("Total Holiday")}:12, {t("Total Weekend")}:51, {t("Total Leave")}:0, {t("Total Present")}:7, {t("Total Late With Excuse")}:1, {t("Total Late")}:0, {t("Total Absent")}:0
+                  {t("Present")}: {attendance.filter(a => a.status === 'Present').length}, {t("Absent")}: {attendance.filter(a => a.status === 'Absent').length}, {t("Late")}: {attendance.filter(a => a.status === 'Late').length}, {t("Half Day")}: {attendance.filter(a => a.status === 'Half Day').length}
                 </div>
               </div>
             

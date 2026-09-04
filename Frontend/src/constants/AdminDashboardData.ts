@@ -165,7 +165,19 @@ export const sidebarMenuItems: SidebarEntry[] = [
       ],
     },
   },
-  { type: "link", data: { icon: "fa-fee", label: "Fee", href: "/dashboard/fee" } },
+  {
+    type: "treeview",
+    data: {
+      icon: "fa-money",
+      label: "Fee Management",
+      defaultOpen: false,
+      children: [
+        { icon: "fa-dashboard", label: "Fee Dashboard", href: "/dashboard/fee" },
+        { icon: "fa-credit-card", label: "Collect Fee", href: "/dashboard/fee/collect" },
+        { icon: "fa-history", label: "Receipts History", href: "/dashboard/fee/receipts" },
+      ],
+    },
+  },
   {
     type: "treeview",
     data: {

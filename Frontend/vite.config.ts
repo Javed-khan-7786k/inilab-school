@@ -7,4 +7,18 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    allowedHosts: [
+      'lethargy-catchable-mushy.ngrok-free.dev'
+    ]
+  }
 })
+// import { defineConfig } from 'vite';
+
+// export default defineConfig({
+//   server: {
+//     allowedHosts: [
+//       'lethargy-catchable-mushy.ngrok-free.dev'
+//     ]
+//   }
+// });

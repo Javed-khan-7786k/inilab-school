@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { useLanguage } from '../../context/LanguageContext';
 import { MessageSidebar } from '../../components/message/MessageSidebar';
@@ -8,8 +8,10 @@ import { MessageTableControls } from '../../components/message/MessageTableContr
 import { MessageTableContent } from '../../components/message/MessageTableContent';
 import { MessageSettingsView } from '../../components/message/MessageSettingsView';
 
+import { mailSmsApi } from '../../services/api/mailSmsApi';
+
 export interface Message {
-  id: number;
+  id: number | string;
   status: string;
   name: string;
   subject: string;
@@ -33,6 +35,30 @@ export const MessagePage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const loadMessages = async () => {
+    try {
+      const data = await mailSmsApi.getAll();
+      if (Array.isArray(data)) {
+        const mapped: Message[] = data.map((item, idx) => ({
+          id: item.id || idx + 1,
+          status: item.type || "Active",
+          name: item.users || item.role || "User",
+          subject: item.message && item.message.length > 50 ? item.message.slice(0, 50) + "..." : item.message || "No Subject",
+          attach: "",
+          time: item.dateTime || new Date().toLocaleTimeString(),
+          reply: "",
+        }));
+        setMessages(mapped);
+      }
+    } catch (err) {
+      console.warn("Failed to load messages from DB:", err);
+    }
+  };
+
+  React.useEffect(() => {
+    loadMessages();
+  }, []);
+
   const handleFolderClick = (name: string) => {
     setFolders(
       folders.map((f) => ({
@@ -50,23 +76,22 @@ export const MessagePage: React.FC = () => {
     alert("Select All Messages");
   };
 
-  const handleDeleteSelected = () => {
-    setMessages([]);
-    alert("Messages Cleared!");
+  const handleDeleteSelected = async () => {
+    try {
+      for (const m of messages) {
+        if (m.id) {
+          await mailSmsApi.delete(m.id).catch(() => {});
+        }
+      }
+      setMessages([]);
+      alert(t("Messages Cleared!"));
+    } catch (err: any) {
+      alert(err.message || "Failed to clear messages");
+    }
   };
 
   const handleRefresh = () => {
-    // Generate simulated dynamic inbox mock messages
-    const newMsg: Message = {
-      id: messages.length + 1,
-      status: "Active",
-      name: "Ali Shohag",
-      subject: "Vite build query",
-      attach: "",
-      time: new Date().toLocaleTimeString(),
-      reply: ""
-    };
-    setMessages([newMsg, ...messages]);
+    loadMessages();
   };
 
   const activeFolder = folders.find((f) => f.active)?.name || 'Conversation';

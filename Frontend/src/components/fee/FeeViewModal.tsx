@@ -68,7 +68,12 @@ export const FeeViewModal: React.FC<FeeViewModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Fee Details">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Fee Details"
+      maxWidthClass="max-w-4xl"
+    >
       <div className="p-5" id="printable-fee-details">
         {/* Print Styles */}
         <style>{`

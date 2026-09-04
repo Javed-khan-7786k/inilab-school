@@ -80,6 +80,8 @@ import {
 } from "./pages";
 import FeeDashboard from "./pages/fee/FeeDashboard";
 import FeeViewPage from "./pages/fee/FeeViewPage";
+import FeeCollectPage from "./pages/fee/FeeCollectPage";
+import FeeReceiptsPage from "./pages/fee/FeeReceiptsPage";
 
 function App() {
   return (
@@ -1011,6 +1013,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <FeeDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/fee/collect"
+            element={
+              <ProtectedRoute>
+                <FeeCollectPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/fee/receipts"
+            element={
+              <ProtectedRoute>
+                <FeeReceiptsPage />
               </ProtectedRoute>
             }
           />

@@ -71,23 +71,15 @@ import type {
   MarkItem,
   MarkDistributionItem,
   PromotionSettingItem,
-  FeeRecord
+  FeeRecord,
+  FeeReceipt,
+  StudentFeeSearchResult
 } from "../types";
-
-import { MOCK_STUDENTS } from "../constants/mockData";
 
 export const dataService = {
   // Students
   async getStudents(): Promise<Student[]> {
-    try {
-      const data = await studentApi.getAll();
-      if (Array.isArray(data) && data.length > 0) {
-        return data;
-      }
-    } catch (err) {
-      console.warn("Failed to fetch students from DB API, using fallback test mock data:", err);
-    }
-    return MOCK_STUDENTS;
+    return studentApi.getAll();
   },
 
   // Admin Student page: ONLY real admitted students (no pending enquiries)
@@ -642,5 +634,21 @@ export const dataService = {
   },
   async updateFee(id: string | number, data: Partial<FeeRecord>): Promise<FeeRecord> {
     return feeApi.update(id, data);
+  },
+  async getFeeStructure(className?: string): Promise<any> {
+    return feeApi.getStructure(className);
+  },
+  async searchFeeStudents(query: string): Promise<StudentFeeSearchResult[]> {
+    return feeApi.searchStudents(query);
+  },
+  async collectFee(data: any): Promise<FeeReceipt> {
+    return feeApi.collectFee(data);
+  },
+  async getFeeReceipts(params?: any): Promise<FeeReceipt[]> {
+    return feeApi.getReceipts(params);
+  },
+  async getFeeReceiptById(id: string): Promise<FeeReceipt> {
+    return feeApi.getReceiptById(id);
   }
 };
+
